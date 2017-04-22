@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
+public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
@@ -72,7 +72,17 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
     }
 }
 
-[CustomPropertyDrawer(typeof(DictionaryTest.StringDictionary))]
-public class StringDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer<string, string>
+[CustomPropertyDrawer(typeof(DictionaryTest.StringStringDictionary))]
+public class StringStringDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer
+{
+}
+
+[CustomPropertyDrawer(typeof(DictionaryTest.ColorStringDictionary))]
+public class ColorStringDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer
+{
+}
+
+[CustomPropertyDrawer(typeof(DictionaryTest.StringColorDictionary))]
+public class StringColorDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer
 {
 }

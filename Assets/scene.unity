@@ -146,6 +146,21 @@ MonoBehaviour:
     m_values:
     - b
     - d
+  m_testDictionary1:
+    m_keys:
+    - red
+    - blue
+    m_values:
+    - {r: 1, g: 0, b: 0, a: 1}
+    - {r: 0, g: 0, b: 1, a: 1}
+  m_testDictionary2:
+    m_keys:
+    - {r: 0, g: 1, b: 0, a: 1}
+    - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    m_values:
+    - green
+    - yellow
+  m_testArray: []
 --- !u!81 &309039235
 AudioListener:
   m_ObjectHideFlags: 0

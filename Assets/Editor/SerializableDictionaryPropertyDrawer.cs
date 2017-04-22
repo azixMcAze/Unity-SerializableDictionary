@@ -48,11 +48,27 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
         EditorGUI.EndProperty();
 	}
 
-	public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
+	public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+	{
+		float propertyHeight = EditorGUIUtility.singleLineHeight;
+
         if (property.isExpanded)
-        	return EditorGUIUtility.singleLineHeight * (1 + property.FindPropertyRelative("m_keys").arraySize);
-		else
-        	return EditorGUIUtility.singleLineHeight;
+		{
+			var keysProperty = property.FindPropertyRelative("m_keys");
+			var valuesProperty = property.FindPropertyRelative("m_values");
+			int n = keysProperty.arraySize;
+			for(int i = 0; i < n; ++i)
+			{
+				var keyProperty = keysProperty.GetArrayElementAtIndex(i);
+				var valueProperty = valuesProperty.GetArrayElementAtIndex(i);
+				float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
+				float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
+				float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
+				propertyHeight += lineHeight;
+			}
+		}
+
+		return propertyHeight;
     }
 }
 

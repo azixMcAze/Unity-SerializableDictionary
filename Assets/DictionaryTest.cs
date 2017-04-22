@@ -21,5 +21,4 @@ public class DictionaryTest : MonoBehaviour {
 		m_testDictionary1 = new StringColorDictionary() { {"red", Color.red}, {"blue", Color.blue} };
 		m_testDictionary2 = new ColorStringDictionary() { {Color.green, "green"}, {Color.yellow, "yellow"} };
 	}
-
 }

@@ -9,8 +9,8 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
     {
 		label = EditorGUI.BeginProperty(position, label, property);
 
-		// EditorGUI.PropertyField(position, property, label, false);
-		property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, label);
+		EditorGUI.PropertyField(position, property, label, false);
+		// property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, label);
 		if (property.isExpanded)
 		{
 			var keysProperty = property.FindPropertyRelative("m_keys");

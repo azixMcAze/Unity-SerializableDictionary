@@ -14,11 +14,11 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
     {
 		if(m_keys != null && m_values != null && m_keys.Length == m_values.Length)
 		{
-	        base.Clear();
+	        this.Clear();
 			int n = m_keys.Length;
 			for(int i = 0; i < n; ++i)
 			{
-				base[m_keys[i]] = m_values[i];
+				this[m_keys[i]] = m_values[i];
 			}
 
 			m_keys = null;
@@ -29,7 +29,7 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
 
     public void OnBeforeSerialize()
     {
-        int n = base.Count;
+        int n = this.Count;
 		m_keys = new TKey[n];
 		m_values = new TValue[n];
 

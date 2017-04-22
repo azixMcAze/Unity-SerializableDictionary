@@ -9,6 +9,7 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
     {
 		label = EditorGUI.BeginProperty(position, label, property);
 
+		// EditorGUI.PropertyField(position, property, label, false);
 		property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, label);
 		if (property.isExpanded)
 		{
@@ -17,22 +18,28 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 
         	EditorGUI.indentLevel++;
 			var linePosition = EditorGUI.IndentedRect(position);
-			linePosition.height = EditorGUIUtility.singleLineHeight;
+			linePosition.y += EditorGUIUtility.singleLineHeight;
 
 			int n = keysProperty.arraySize;
 			for(int i = 0; i < n; ++i)
 			{
-				linePosition.y += EditorGUIUtility.singleLineHeight;
-
 				var keyProperty = keysProperty.GetArrayElementAtIndex(i);
+				var valueProperty = valuesProperty.GetArrayElementAtIndex(i);
+				float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
+				float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
+
+				float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
+				linePosition.height = lineHeight;
+
 				var keyPosition = linePosition;
 				keyPosition.xMax = EditorGUIUtility.labelWidth;
 				EditorGUI.PropertyField(keyPosition, keyProperty, GUIContent.none, false);
 
-				var valueProperty = valuesProperty.GetArrayElementAtIndex(i);
 				var valuePosition = linePosition;
 				valuePosition.xMin = EditorGUIUtility.labelWidth;
 				EditorGUI.PropertyField(valuePosition, valueProperty, GUIContent.none, false);
+
+				linePosition.y += lineHeight;
 			}
 
 	        EditorGUI.indentLevel--;

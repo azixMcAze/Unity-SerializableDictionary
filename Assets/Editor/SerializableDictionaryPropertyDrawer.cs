@@ -5,9 +5,15 @@ using UnityEditor;
 
 public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 {
+	GUIContent m_iconPlus = EditorGUIUtility.IconContent ("Toolbar Plus", "|Add");
+	GUIContent m_iconMinus = EditorGUIUtility.IconContent ("Toolbar Minus", "|Remove");
+	GUIStyle m_buttonStyle = "Right Label";
+
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
-		label = EditorGUI.BeginProperty(position, label, property);
+        label = EditorGUI.BeginProperty(position, label, property);
+
+		var buttonWidth = m_buttonStyle.CalcSize(m_iconPlus).x;
 
 		var labelPosition = position;
 		labelPosition.height = EditorGUIUtility.singleLineHeight;
@@ -15,6 +21,13 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		// property.isExpanded = EditorGUI.Foldout(labelPosition, property.isExpanded, label);
 		if (property.isExpanded)
 		{
+			var buttonPosition = position;
+			buttonPosition.xMin = buttonPosition.xMax - buttonWidth;
+			buttonPosition.height = EditorGUIUtility.singleLineHeight;
+			if(GUI.Button(buttonPosition, m_iconPlus, m_buttonStyle))
+			{
+			}
+
 			var keysProperty = property.FindPropertyRelative("m_keys");
 			var valuesProperty = property.FindPropertyRelative("m_values");
 
@@ -37,8 +50,16 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				keyPosition.xMax = EditorGUIUtility.labelWidth;
 				EditorGUI.PropertyField(keyPosition, keyProperty, GUIContent.none, false);
 
+				buttonPosition = linePosition;
+				buttonPosition.xMin = buttonPosition.xMax - buttonWidth;
+				buttonPosition.height = EditorGUIUtility.singleLineHeight;
+				if(GUI.Button(buttonPosition, m_iconMinus, m_buttonStyle))
+				{
+				}
+
 				var valuePosition = linePosition;
 				valuePosition.xMin = EditorGUIUtility.labelWidth;
+				valuePosition.xMax -= buttonWidth;
 				EditorGUI.PropertyField(valuePosition, valueProperty, GUIContent.none, false);
 
 				linePosition.y += lineHeight;

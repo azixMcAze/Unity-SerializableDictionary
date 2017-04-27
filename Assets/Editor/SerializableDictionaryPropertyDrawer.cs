@@ -7,7 +7,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 {
 	GUIContent m_iconPlus = EditorGUIUtility.IconContent ("Toolbar Plus", "|Add");
 	GUIContent m_iconMinus = EditorGUIUtility.IconContent ("Toolbar Minus", "|Remove");
-	GUIStyle m_buttonStyle = "Right Label";
+	GUIStyle m_buttonStyle = GUIStyle.none;
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {

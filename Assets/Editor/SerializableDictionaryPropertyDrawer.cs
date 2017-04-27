@@ -9,14 +9,17 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 	GUIContent m_iconMinus = EditorGUIUtility.IconContent ("Toolbar Minus", "|Remove");
 	GUIStyle m_buttonStyle = GUIStyle.none;
 
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-    {
-        label = EditorGUI.BeginProperty(position, label, property);
+	public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+	{
+		label = EditorGUI.BeginProperty(position, label, property);
 
 		var buttonWidth = m_buttonStyle.CalcSize(m_iconPlus).x;
 
 		var labelPosition = position;
 		labelPosition.height = EditorGUIUtility.singleLineHeight;
+		if (property.isExpanded) 
+			labelPosition.xMax -= m_buttonStyle.CalcSize(m_iconPlus).x;
+			
 		EditorGUI.PropertyField(labelPosition, property, label, false);
 		// property.isExpanded = EditorGUI.Foldout(labelPosition, property.isExpanded, label);
 		if (property.isExpanded)
@@ -31,7 +34,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			var keysProperty = property.FindPropertyRelative("m_keys");
 			var valuesProperty = property.FindPropertyRelative("m_values");
 
-        	EditorGUI.indentLevel++;
+			EditorGUI.indentLevel++;
 			var linePosition = EditorGUI.IndentedRect(position);
 			linePosition.y += EditorGUIUtility.singleLineHeight;
 
@@ -65,17 +68,17 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				linePosition.y += lineHeight;
 			}
 
-	        EditorGUI.indentLevel--;
+			EditorGUI.indentLevel--;
 		}
 
-        EditorGUI.EndProperty();
+		EditorGUI.EndProperty();
 	}
 
 	public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 	{
 		float propertyHeight = EditorGUIUtility.singleLineHeight;
 
-        if (property.isExpanded)
+		if (property.isExpanded)
 		{
 			var keysProperty = property.FindPropertyRelative("m_keys");
 			var valuesProperty = property.FindPropertyRelative("m_values");
@@ -92,7 +95,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		}
 
 		return propertyHeight;
-    }
+	}
 }
 
 [CustomPropertyDrawer(typeof(DictionaryTest.StringStringDictionary))]

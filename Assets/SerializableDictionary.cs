@@ -10,11 +10,11 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
 	[SerializeField]
 	TValue[] m_values;
 
-    public void OnAfterDeserialize()
-    {
+	public void OnAfterDeserialize()
+	{
 		if(m_keys != null && m_values != null && m_keys.Length == m_values.Length)
 		{
-	        this.Clear();
+			this.Clear();
 			int n = m_keys.Length;
 			for(int i = 0; i < n; ++i)
 			{
@@ -25,11 +25,11 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
 			m_values = null;
 		}
 
-    }
+	}
 
-    public void OnBeforeSerialize()
-    {
-        int n = this.Count;
+	public void OnBeforeSerialize()
+	{
+		int n = this.Count;
 		m_keys = new TKey[n];
 		m_values = new TValue[n];
 
@@ -40,5 +40,5 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
 			m_values[i] = kvp.Value;
 			++i;
 		}
-    }
+	}
 }

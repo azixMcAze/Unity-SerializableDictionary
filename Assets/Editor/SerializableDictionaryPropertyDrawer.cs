@@ -9,9 +9,21 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 	GUIContent m_iconMinus = EditorGUIUtility.IconContent ("Toolbar Minus", "|Remove");
 	GUIStyle m_buttonStyle = GUIStyle.none;
 
+	enum Action
+	{
+		None,
+		Add,
+		Remove
+	}
+
 	public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 	{
 		label = EditorGUI.BeginProperty(position, label, property);
+		
+		Action buttonAction = Action.None;
+		int buttonActionIndex = 0;
+		var keysProperty = property.FindPropertyRelative("m_keys");
+		var valuesProperty = property.FindPropertyRelative("m_values");
 
 		var buttonWidth = m_buttonStyle.CalcSize(m_iconPlus).x;
 
@@ -19,27 +31,27 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		labelPosition.height = EditorGUIUtility.singleLineHeight;
 		if (property.isExpanded) 
 			labelPosition.xMax -= m_buttonStyle.CalcSize(m_iconPlus).x;
-			
+
 		EditorGUI.PropertyField(labelPosition, property, label, false);
 		// property.isExpanded = EditorGUI.Foldout(labelPosition, property.isExpanded, label);
 		if (property.isExpanded)
 		{
+			int dictSize = keysProperty.arraySize;
+
 			var buttonPosition = position;
 			buttonPosition.xMin = buttonPosition.xMax - buttonWidth;
 			buttonPosition.height = EditorGUIUtility.singleLineHeight;
 			if(GUI.Button(buttonPosition, m_iconPlus, m_buttonStyle))
 			{
+				buttonAction = Action.Add;
+				buttonActionIndex = dictSize;
 			}
-
-			var keysProperty = property.FindPropertyRelative("m_keys");
-			var valuesProperty = property.FindPropertyRelative("m_values");
 
 			EditorGUI.indentLevel++;
 			var linePosition = EditorGUI.IndentedRect(position);
 			linePosition.y += EditorGUIUtility.singleLineHeight;
 
-			int n = keysProperty.arraySize;
-			for(int i = 0; i < n; ++i)
+			for(int i = 0; i < dictSize; ++i)
 			{
 				var keyProperty = keysProperty.GetArrayElementAtIndex(i);
 				var valueProperty = valuesProperty.GetArrayElementAtIndex(i);
@@ -58,6 +70,8 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				buttonPosition.height = EditorGUIUtility.singleLineHeight;
 				if(GUI.Button(buttonPosition, m_iconMinus, m_buttonStyle))
 				{
+					buttonAction = Action.Remove;
+					buttonActionIndex = i;
 				}
 
 				var valuePosition = linePosition;
@@ -69,6 +83,17 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			}
 
 			EditorGUI.indentLevel--;
+		}
+
+		if(buttonAction == Action.Add)
+		{
+			keysProperty.InsertArrayElementAtIndex(buttonActionIndex);
+			valuesProperty.InsertArrayElementAtIndex(buttonActionIndex);
+		}
+		else if(buttonAction == Action.Remove)
+		{
+			keysProperty.DeleteArrayElementAtIndex(buttonActionIndex);
+			valuesProperty.DeleteArrayElementAtIndex(buttonActionIndex);
 		}
 
 		EditorGUI.EndProperty();

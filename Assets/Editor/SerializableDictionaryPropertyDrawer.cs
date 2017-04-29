@@ -11,6 +11,10 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 	GUIContent m_iconMinus = EditorGUIUtility.IconContent ("Toolbar Minus", "|Remove");
 	GUIStyle m_buttonStyle = GUIStyle.none;
 
+	object m_duplicatedKey;
+	object m_duplicatedKeyValue;
+	int m_duplicatedKeyPosition;
+
 	enum Action
 	{
 		None,
@@ -29,15 +33,28 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 		Type scriptType = scriptInstance.GetType();
 		BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
 		FieldInfo dictionaryField = scriptType.GetField(property.propertyPath, flags);
-		IDictionary<TKey, TValue> dictionaryInstance = (IDictionary<TKey, TValue>) dictionaryField.GetValue(scriptInstance);
+		SerializableDictionary<TKey, TValue> dictionaryInstance = (SerializableDictionary<TKey, TValue>) dictionaryField.GetValue(scriptInstance);
 		Type dictionaryType = dictionaryField.FieldType.BaseType;
 		FieldInfo keysField = dictionaryType.GetField("m_keys", flags);
 		FieldInfo valuesField = dictionaryType.GetField("m_values", flags);
+
+		Debug.Log("SerializableDictionaryPropertyDrawer.OnGUI : " + DebugUtils.ToString(dictionaryInstance));
 
 		var keysProperty = property.FindPropertyRelative("m_keys");
 		var valuesProperty = property.FindPropertyRelative("m_values");
 
 		var buttonWidth = m_buttonStyle.CalcSize(m_iconPlus).x;
+
+		if(m_duplicatedKey != null)
+		{
+			keysProperty.InsertArrayElementAtIndex(m_duplicatedKeyPosition);
+			var keyProperty = keysProperty.GetArrayElementAtIndex(m_duplicatedKeyPosition);
+			SetPropertyValue(keyProperty, m_duplicatedKey);
+
+			valuesProperty.InsertArrayElementAtIndex(m_duplicatedKeyPosition);
+			var valueProperty = valuesProperty.GetArrayElementAtIndex(m_duplicatedKeyPosition);
+			SetPropertyValue(valueProperty, m_duplicatedKeyValue);			
+		}
 
 		var labelPosition = position;
 		labelPosition.height = EditorGUIUtility.singleLineHeight;
@@ -86,7 +103,19 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 							var keyProperty2 = keysProperty.GetArrayElementAtIndex(j);
 							if(EqualsValue(keyProperty2, keyProperty))
 							{
+								m_duplicatedKey = GetPropertyValue(keyProperty);
+								m_duplicatedKeyValue = GetPropertyValue(valueProperty);
+								m_duplicatedKeyPosition = i;
+
 								Debug.Log("key[" + i + "] == key[" + j + "]");
+								
+								break;
+							}
+							else
+							{
+								m_duplicatedKey = null;
+								m_duplicatedKeyValue = null;
+								m_duplicatedKeyPosition = 0;
 							}
 						}
 					}
@@ -146,6 +175,11 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 			}
 		}
 
+		if(m_duplicatedKey != null)
+		{
+			propertyHeight += EditorGUIUtility.singleLineHeight;
+		}
+
 		return propertyHeight;
 	}
 
@@ -189,8 +223,19 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 		if(p1.propertyType != p2.propertyType)
 			return false;
 
-		PropertyInfo propertyInfo = ms_serializedPropertyValueAccessorsDict[p1.propertyType];
-		return object.Equals(propertyInfo.GetValue(p1, null), propertyInfo.GetValue(p2, null));
+		return object.Equals(GetPropertyValue(p1), GetPropertyValue(p2));
+	}
+
+	static object GetPropertyValue(SerializedProperty p)
+	{
+		PropertyInfo propertyInfo = ms_serializedPropertyValueAccessorsDict[p.propertyType];
+		return propertyInfo.GetValue(p, null);
+	}
+
+	static void SetPropertyValue(SerializedProperty p, object v)
+	{
+		PropertyInfo propertyInfo = ms_serializedPropertyValueAccessorsDict[p.propertyType];
+		propertyInfo.SetValue(p, v, null);
 	}
 }
 

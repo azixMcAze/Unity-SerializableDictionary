@@ -41,14 +41,11 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 		FieldInfo keysField = dictionaryType.GetField("m_keys", flags);
 		FieldInfo valuesField = dictionaryType.GetField("m_values", flags);
 
-		Debug.Log("SerializableDictionaryPropertyDrawer.OnGUI : " + DebugUtils.ToString(dictionaryInstance) + " k:" + m_duplicatedKey + " v:" + m_duplicatedKeyValue);
-
 		var keysProperty = property.FindPropertyRelative("m_keys");
 		var valuesProperty = property.FindPropertyRelative("m_values");
 
 		if(m_duplicatedKey != null)
 		{
-			Debug.Log("SerializableDictionaryPropertyDrawer.OnGUI Insert @" + m_duplicatedKeyIndex1 + " k:" + m_duplicatedKey + " v:" + m_duplicatedKeyValue);
 			keysProperty.InsertArrayElementAtIndex(m_duplicatedKeyIndex1);
 			var keyProperty = keysProperty.GetArrayElementAtIndex(m_duplicatedKeyIndex1);
 			SetPropertyValue(keyProperty, m_duplicatedKey);

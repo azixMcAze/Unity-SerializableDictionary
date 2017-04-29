@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Text;
 
-public static class DebugUtils
+public static class DebugUtilsEditor
 {
 	public static string ToString(SerializedProperty property)
 	{

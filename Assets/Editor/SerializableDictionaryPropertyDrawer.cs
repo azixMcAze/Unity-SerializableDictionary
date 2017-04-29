@@ -13,7 +13,8 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 
 	object m_duplicatedKey = null;
 	object m_duplicatedKeyValue = null;
-	int m_duplicatedKeyIndex = -1 ;
+	int m_duplicatedKeyIndex1 = -1 ;
+	int m_duplicatedKeyIndex2 = -1 ;
 	float m_duplicatedKeyLineHeight = 0f;
 
 	enum Action
@@ -46,13 +47,13 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 
 		if(m_duplicatedKey != null)
 		{
-			Debug.Log("SerializableDictionaryPropertyDrawer.OnGUI Insert @" + m_duplicatedKeyIndex + " k:" + m_duplicatedKey + " v:" + m_duplicatedKeyValue);
-			keysProperty.InsertArrayElementAtIndex(m_duplicatedKeyIndex);
-			var keyProperty = keysProperty.GetArrayElementAtIndex(m_duplicatedKeyIndex);
+			Debug.Log("SerializableDictionaryPropertyDrawer.OnGUI Insert @" + m_duplicatedKeyIndex1 + " k:" + m_duplicatedKey + " v:" + m_duplicatedKeyValue);
+			keysProperty.InsertArrayElementAtIndex(m_duplicatedKeyIndex1);
+			var keyProperty = keysProperty.GetArrayElementAtIndex(m_duplicatedKeyIndex1);
 			SetPropertyValue(keyProperty, m_duplicatedKey);
 
-			valuesProperty.InsertArrayElementAtIndex(m_duplicatedKeyIndex);
-			var valueProperty = valuesProperty.GetArrayElementAtIndex(m_duplicatedKeyIndex);
+			valuesProperty.InsertArrayElementAtIndex(m_duplicatedKeyIndex1);
+			var valueProperty = valuesProperty.GetArrayElementAtIndex(m_duplicatedKeyIndex1);
 			SetPropertyValue(valueProperty, m_duplicatedKeyValue);
 		}
 
@@ -109,7 +110,7 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 					buttonActionIndex = i;
 				}
 
-				if(i == m_duplicatedKeyIndex)
+				if(i == m_duplicatedKeyIndex1 || i == m_duplicatedKeyIndex2)
 				{
 					var iconPosition = linePosition;
 					var warningContent = new GUIContent("!");
@@ -136,7 +137,8 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 
 		m_duplicatedKey = null;
 		m_duplicatedKeyValue = null;
-		m_duplicatedKeyIndex = -1;
+		m_duplicatedKeyIndex1 = -1;
+		m_duplicatedKeyIndex2 = -1;
 		m_duplicatedKeyLineHeight = 0f;
 		dictSize = keysProperty.arraySize;
 
@@ -156,7 +158,8 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 					float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
 					float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
 					m_duplicatedKeyLineHeight = lineHeight;
-					m_duplicatedKeyIndex = i;
+					m_duplicatedKeyIndex1 = i;
+					m_duplicatedKeyIndex2 = j;
 
 					break;
 				}

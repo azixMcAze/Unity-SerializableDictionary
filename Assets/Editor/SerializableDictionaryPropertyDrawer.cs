@@ -29,7 +29,6 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 
 		Action buttonAction = Action.None;
 		int buttonActionIndex = 0;
-		int activeIndex = -1;
 
 		UnityEngine.Object scriptInstance = property.serializedObject.targetObject;
 		Type scriptType = scriptInstance.GetType();
@@ -55,8 +54,6 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 			valuesProperty.InsertArrayElementAtIndex(m_duplicatedKeyIndex);
 			var valueProperty = valuesProperty.GetArrayElementAtIndex(m_duplicatedKeyIndex);
 			SetPropertyValue(valueProperty, m_duplicatedKeyValue);
-
-			activeIndex = m_duplicatedKeyIndex;
 		}
 
 		var buttonWidth = m_buttonStyle.CalcSize(m_iconPlus).x;
@@ -96,12 +93,7 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 
 				var keyPosition = linePosition;
 				keyPosition.xMax = EditorGUIUtility.labelWidth;
-				EditorGUI.BeginChangeCheck();
 				EditorGUI.PropertyField(keyPosition, keyProperty, GUIContent.none, false);
-				if(EditorGUI.EndChangeCheck() && activeIndex == -1)
-				{
-					activeIndex = i;
-				}
 
 				var valuePosition = linePosition;
 				valuePosition.xMin = EditorGUIUtility.labelWidth;
@@ -127,7 +119,6 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 		{
 			keysProperty.InsertArrayElementAtIndex(buttonActionIndex);
 			valuesProperty.InsertArrayElementAtIndex(buttonActionIndex);
-			activeIndex = buttonActionIndex;
 		}
 		else if(buttonAction == Action.Remove)
 		{
@@ -135,36 +126,31 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 			valuesProperty.DeleteArrayElementAtIndex(buttonActionIndex);
 		}
 
-		if(activeIndex != -1)
+		m_duplicatedKey = null;
+		m_duplicatedKeyValue = null;
+		m_duplicatedKeyIndex = 0;
+		m_duplicatedKeyLineHeight = 0f;
+		dictSize = keysProperty.arraySize;
+
+		for(int i = 0; i < dictSize; ++i)
 		{
-			var keyProperty = keysProperty.GetArrayElementAtIndex(activeIndex);
-			var valueProperty = valuesProperty.GetArrayElementAtIndex(activeIndex);
-			
-			float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
-			float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
-			float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
+			var keyProperty = keysProperty.GetArrayElementAtIndex(i);
 
-			for(int i = 0; i < dictSize; i ++)
+			for(int j = i + 1; j < dictSize; j ++)
 			{
-				if (i != activeIndex)
+				var keyProperty2 = keysProperty.GetArrayElementAtIndex(j);
+				if(EqualsValue(keyProperty2, keyProperty))
 				{
-					var keyProperty2 = keysProperty.GetArrayElementAtIndex(i);
-					if(EqualsValue(keyProperty2, keyProperty))
-					{
-						m_duplicatedKey = GetPropertyValue(keyProperty);
-						m_duplicatedKeyValue = GetPropertyValue(valueProperty);
-						m_duplicatedKeyLineHeight = lineHeight;
-						m_duplicatedKeyIndex = activeIndex;
+					m_duplicatedKey = GetPropertyValue(keyProperty);
+					var valueProperty = valuesProperty.GetArrayElementAtIndex(i);
+					m_duplicatedKeyValue = GetPropertyValue(valueProperty);
+					float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
+					float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
+					float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
+					m_duplicatedKeyLineHeight = lineHeight;
+					m_duplicatedKeyIndex = i;
 
-						break;
-					}
-					else
-					{
-						m_duplicatedKey = null;
-						m_duplicatedKeyValue = null;
-						m_duplicatedKeyIndex = 0;
-						m_duplicatedKeyLineHeight = 0f;
-					}
+					break;
 				}
 			}
 		}

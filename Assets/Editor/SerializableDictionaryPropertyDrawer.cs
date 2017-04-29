@@ -5,7 +5,7 @@ using UnityEditor;
 using System.Reflection;
 using System;
 
-public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
+public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 {
 	GUIContent m_iconPlus = EditorGUIUtility.IconContent ("Toolbar Plus", "|Add");
 	GUIContent m_iconMinus = EditorGUIUtility.IconContent ("Toolbar Minus", "|Remove");
@@ -242,10 +242,10 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 }
 
 [CustomPropertyDrawer(typeof(DictionaryTest.StringStringDictionary))]
-public class StringStringDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer<string, string> {}
+public class StringStringDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
 
 [CustomPropertyDrawer(typeof(DictionaryTest.ColorStringDictionary))]
-public class ColorStringDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer<Color, string> {}
+public class ColorStringDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
 
 [CustomPropertyDrawer(typeof(DictionaryTest.StringColorDictionary))]
-public class StringColorDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer<string, Color> {}
+public class StringColorDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}

@@ -32,15 +32,6 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 		Action buttonAction = Action.None;
 		int buttonActionIndex = 0;
 
-		UnityEngine.Object scriptInstance = property.serializedObject.targetObject;
-		Type scriptType = scriptInstance.GetType();
-		BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
-		FieldInfo dictionaryField = scriptType.GetField(property.propertyPath, flags);
-		SerializableDictionary<TKey, TValue> dictionaryInstance = (SerializableDictionary<TKey, TValue>) dictionaryField.GetValue(scriptInstance);
-		Type dictionaryType = dictionaryField.FieldType.BaseType;
-		FieldInfo keysField = dictionaryType.GetField("m_keys", flags);
-		FieldInfo valuesField = dictionaryType.GetField("m_values", flags);
-
 		var keysProperty = property.FindPropertyRelative("m_keys");
 		var valuesProperty = property.FindPropertyRelative("m_values");
 

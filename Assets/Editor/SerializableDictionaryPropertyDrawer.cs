@@ -14,6 +14,7 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 	object m_duplicatedKey;
 	object m_duplicatedKeyValue;
 	int m_duplicatedKeyPosition;
+	float m_duplicatedKeyLineHeight;
 
 	enum Action
 	{
@@ -105,9 +106,8 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 							{
 								m_duplicatedKey = GetPropertyValue(keyProperty);
 								m_duplicatedKeyValue = GetPropertyValue(valueProperty);
+								m_duplicatedKeyLineHeight = lineHeight;
 								m_duplicatedKeyPosition = i;
-
-								Debug.Log("key[" + i + "] == key[" + j + "]");
 								
 								break;
 							}
@@ -116,6 +116,7 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 								m_duplicatedKey = null;
 								m_duplicatedKeyValue = null;
 								m_duplicatedKeyPosition = 0;
+								m_duplicatedKeyLineHeight = 0f;
 							}
 						}
 					}
@@ -177,7 +178,7 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 
 		if(m_duplicatedKey != null)
 		{
-			propertyHeight += EditorGUIUtility.singleLineHeight;
+			propertyHeight += m_duplicatedKeyLineHeight;
 		}
 
 		return propertyHeight;

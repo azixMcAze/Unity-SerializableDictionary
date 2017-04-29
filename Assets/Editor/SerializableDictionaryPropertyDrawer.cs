@@ -11,10 +11,10 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 	GUIContent m_iconMinus = EditorGUIUtility.IconContent ("Toolbar Minus", "|Remove");
 	GUIStyle m_buttonStyle = GUIStyle.none;
 
-	object m_duplicatedKey;
-	object m_duplicatedKeyValue;
-	int m_duplicatedKeyIndex;
-	float m_duplicatedKeyLineHeight;
+	object m_duplicatedKey = null;
+	object m_duplicatedKeyValue = null;
+	int m_duplicatedKeyIndex = -1 ;
+	float m_duplicatedKeyLineHeight = 0f;
 
 	enum Action
 	{
@@ -109,6 +109,14 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 					buttonActionIndex = i;
 				}
 
+				if(i == m_duplicatedKeyIndex)
+				{
+					var iconPosition = linePosition;
+					var warningContent = new GUIContent("!");
+					valuePosition.xMax = m_buttonStyle.CalcSize(warningContent).x;
+					GUI.Label(iconPosition, warningContent);
+				}
+
 				linePosition.y += lineHeight;
 			}
 
@@ -128,7 +136,7 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 
 		m_duplicatedKey = null;
 		m_duplicatedKeyValue = null;
-		m_duplicatedKeyIndex = 0;
+		m_duplicatedKeyIndex = -1;
 		m_duplicatedKeyLineHeight = 0f;
 		dictSize = keysProperty.arraySize;
 

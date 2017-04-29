@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.Reflection;
+using System;
 
-public class SerializableDictionaryPropertyDrawer : PropertyDrawer
+public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 {
 	GUIContent m_iconPlus = EditorGUIUtility.IconContent ("Toolbar Plus", "|Add");
 	GUIContent m_iconMinus = EditorGUIUtility.IconContent ("Toolbar Minus", "|Remove");
@@ -19,9 +21,19 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 	public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 	{
 		label = EditorGUI.BeginProperty(position, label, property);
-		
+
 		Action buttonAction = Action.None;
 		int buttonActionIndex = 0;
+
+		UnityEngine.Object scriptInstance = property.serializedObject.targetObject;
+		Type scriptType = scriptInstance.GetType();
+		BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
+		FieldInfo dictionaryField = scriptType.GetField(property.propertyPath, flags);
+		IDictionary<TKey, TValue> dictionaryInstance = (IDictionary<TKey, TValue>) dictionaryField.GetValue(scriptInstance);
+		Type dictionaryType = dictionaryField.FieldType.BaseType;
+		FieldInfo keysField = dictionaryType.GetField("m_keys", flags);
+		FieldInfo valuesField = dictionaryType.GetField("m_values", flags);
+
 		var keysProperty = property.FindPropertyRelative("m_keys");
 		var valuesProperty = property.FindPropertyRelative("m_values");
 
@@ -42,7 +54,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			buttonPosition.xMin = buttonPosition.xMax - buttonWidth;
 			buttonPosition.height = EditorGUIUtility.singleLineHeight;
 			if(GUI.Button(buttonPosition, m_iconPlus, m_buttonStyle))
-			{
+			{			
 				buttonAction = Action.Add;
 				buttonActionIndex = dictSize;
 			}
@@ -124,10 +136,10 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 }
 
 [CustomPropertyDrawer(typeof(DictionaryTest.StringStringDictionary))]
-public class StringStringDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
+public class StringStringDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer<string, string> {}
 
 [CustomPropertyDrawer(typeof(DictionaryTest.ColorStringDictionary))]
-public class ColorStringDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
+public class ColorStringDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer<Color, string> {}
 
 [CustomPropertyDrawer(typeof(DictionaryTest.StringColorDictionary))]
-public class StringColorDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
+public class StringColorDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer<string, Color> {}

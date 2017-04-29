@@ -9,6 +9,7 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 {
 	GUIContent m_iconPlus = EditorGUIUtility.IconContent ("Toolbar Plus", "|Add");
 	GUIContent m_iconMinus = EditorGUIUtility.IconContent ("Toolbar Minus", "|Remove");
+	GUIContent m_warningIcon = new GUIContent("!");
 	GUIStyle m_buttonStyle = GUIStyle.none;
 
 	object m_duplicatedKey = null;
@@ -113,9 +114,8 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 				if(i == m_duplicatedKeyIndex1 || i == m_duplicatedKeyIndex2)
 				{
 					var iconPosition = linePosition;
-					var warningContent = new GUIContent("!");
-					valuePosition.xMax = m_buttonStyle.CalcSize(warningContent).x;
-					GUI.Label(iconPosition, warningContent);
+					valuePosition.xMax = m_buttonStyle.CalcSize(m_warningIcon).x;
+					GUI.Label(iconPosition, m_warningIcon);
 				}
 
 				linePosition.y += lineHeight;

@@ -242,10 +242,6 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 }
 
 [CustomPropertyDrawer(typeof(DictionaryTest.StringStringDictionary))]
-public class StringStringDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
-
 [CustomPropertyDrawer(typeof(DictionaryTest.ColorStringDictionary))]
-public class ColorStringDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
-
 [CustomPropertyDrawer(typeof(DictionaryTest.StringColorDictionary))]
-public class StringColorDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
+public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}

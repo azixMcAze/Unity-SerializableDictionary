@@ -13,7 +13,7 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 
 	object m_duplicatedKey;
 	object m_duplicatedKeyValue;
-	int m_duplicatedKeyPosition;
+	int m_duplicatedKeyIndex;
 	float m_duplicatedKeyLineHeight;
 
 	enum Action
@@ -29,6 +29,7 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 
 		Action buttonAction = Action.None;
 		int buttonActionIndex = 0;
+		int activeIndex = -1;
 
 		UnityEngine.Object scriptInstance = property.serializedObject.targetObject;
 		Type scriptType = scriptInstance.GetType();
@@ -39,23 +40,27 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 		FieldInfo keysField = dictionaryType.GetField("m_keys", flags);
 		FieldInfo valuesField = dictionaryType.GetField("m_values", flags);
 
-		Debug.Log("SerializableDictionaryPropertyDrawer.OnGUI : " + DebugUtils.ToString(dictionaryInstance));
+		Debug.Log("SerializableDictionaryPropertyDrawer.OnGUI : " + DebugUtils.ToString(dictionaryInstance) + " k:" + m_duplicatedKey + " v:" + m_duplicatedKeyValue);
 
 		var keysProperty = property.FindPropertyRelative("m_keys");
 		var valuesProperty = property.FindPropertyRelative("m_values");
 
-		var buttonWidth = m_buttonStyle.CalcSize(m_iconPlus).x;
-
 		if(m_duplicatedKey != null)
 		{
-			keysProperty.InsertArrayElementAtIndex(m_duplicatedKeyPosition);
-			var keyProperty = keysProperty.GetArrayElementAtIndex(m_duplicatedKeyPosition);
+			Debug.Log("SerializableDictionaryPropertyDrawer.OnGUI Insert @" + m_duplicatedKeyIndex + " k:" + m_duplicatedKey + " v:" + m_duplicatedKeyValue);
+			keysProperty.InsertArrayElementAtIndex(m_duplicatedKeyIndex);
+			var keyProperty = keysProperty.GetArrayElementAtIndex(m_duplicatedKeyIndex);
 			SetPropertyValue(keyProperty, m_duplicatedKey);
 
-			valuesProperty.InsertArrayElementAtIndex(m_duplicatedKeyPosition);
-			var valueProperty = valuesProperty.GetArrayElementAtIndex(m_duplicatedKeyPosition);
-			SetPropertyValue(valueProperty, m_duplicatedKeyValue);			
+			valuesProperty.InsertArrayElementAtIndex(m_duplicatedKeyIndex);
+			var valueProperty = valuesProperty.GetArrayElementAtIndex(m_duplicatedKeyIndex);
+			SetPropertyValue(valueProperty, m_duplicatedKeyValue);
+
+			activeIndex = m_duplicatedKeyIndex;
 		}
+
+		var buttonWidth = m_buttonStyle.CalcSize(m_iconPlus).x;
+		int dictSize = keysProperty.arraySize;
 
 		var labelPosition = position;
 		labelPosition.height = EditorGUIUtility.singleLineHeight;
@@ -66,8 +71,6 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 		// property.isExpanded = EditorGUI.Foldout(labelPosition, property.isExpanded, label);
 		if (property.isExpanded)
 		{
-			int dictSize = keysProperty.arraySize;
-
 			var buttonPosition = position;
 			buttonPosition.xMin = buttonPosition.xMax - buttonWidth;
 			buttonPosition.height = EditorGUIUtility.singleLineHeight;
@@ -95,31 +98,9 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 				keyPosition.xMax = EditorGUIUtility.labelWidth;
 				EditorGUI.BeginChangeCheck();
 				EditorGUI.PropertyField(keyPosition, keyProperty, GUIContent.none, false);
-				if(EditorGUI.EndChangeCheck())
+				if(EditorGUI.EndChangeCheck() && activeIndex == -1)
 				{
-					for(int j = 0; j < dictSize; j ++)
-					{
-						if (j != i)
-						{
-							var keyProperty2 = keysProperty.GetArrayElementAtIndex(j);
-							if(EqualsValue(keyProperty2, keyProperty))
-							{
-								m_duplicatedKey = GetPropertyValue(keyProperty);
-								m_duplicatedKeyValue = GetPropertyValue(valueProperty);
-								m_duplicatedKeyLineHeight = lineHeight;
-								m_duplicatedKeyPosition = i;
-								
-								break;
-							}
-							else
-							{
-								m_duplicatedKey = null;
-								m_duplicatedKeyValue = null;
-								m_duplicatedKeyPosition = 0;
-								m_duplicatedKeyLineHeight = 0f;
-							}
-						}
-					}
+					activeIndex = i;
 				}
 
 				var valuePosition = linePosition;
@@ -146,11 +127,46 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 		{
 			keysProperty.InsertArrayElementAtIndex(buttonActionIndex);
 			valuesProperty.InsertArrayElementAtIndex(buttonActionIndex);
+			activeIndex = buttonActionIndex;
 		}
 		else if(buttonAction == Action.Remove)
 		{
 			keysProperty.DeleteArrayElementAtIndex(buttonActionIndex);
 			valuesProperty.DeleteArrayElementAtIndex(buttonActionIndex);
+		}
+
+		if(activeIndex != -1)
+		{
+			var keyProperty = keysProperty.GetArrayElementAtIndex(activeIndex);
+			var valueProperty = valuesProperty.GetArrayElementAtIndex(activeIndex);
+			
+			float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
+			float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
+			float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
+
+			for(int i = 0; i < dictSize; i ++)
+			{
+				if (i != activeIndex)
+				{
+					var keyProperty2 = keysProperty.GetArrayElementAtIndex(i);
+					if(EqualsValue(keyProperty2, keyProperty))
+					{
+						m_duplicatedKey = GetPropertyValue(keyProperty);
+						m_duplicatedKeyValue = GetPropertyValue(valueProperty);
+						m_duplicatedKeyLineHeight = lineHeight;
+						m_duplicatedKeyIndex = activeIndex;
+
+						break;
+					}
+					else
+					{
+						m_duplicatedKey = null;
+						m_duplicatedKeyValue = null;
+						m_duplicatedKeyIndex = 0;
+						m_duplicatedKeyLineHeight = 0f;
+					}
+				}
+			}
 		}
 
 		EditorGUI.EndProperty();

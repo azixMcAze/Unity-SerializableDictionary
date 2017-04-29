@@ -6,7 +6,7 @@ using System;
 
 public static class DebugUtils
 {
-	public static string ArrayToString(Array array)
+	public static string ToString(Array array)
 	{
 		if(array == null)
 			return "null";
@@ -14,7 +14,7 @@ public static class DebugUtils
 			return "{" + string.Join(", ", array.Cast<object>().Select(o => o.ToString()).ToArray()) + "}";
 	}
 
-	public static string DictionaryToString<TKey, TValue>(Dictionary<TKey, TValue> dict)
+	public static string ToString<TKey, TValue>(Dictionary<TKey, TValue> dict)
 	{
 		if(dict == null)
 			return "null";

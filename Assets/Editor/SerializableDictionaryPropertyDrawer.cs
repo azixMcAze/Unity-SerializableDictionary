@@ -75,7 +75,27 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 
 				var keyPosition = linePosition;
 				keyPosition.xMax = EditorGUIUtility.labelWidth;
+				EditorGUI.BeginChangeCheck();
 				EditorGUI.PropertyField(keyPosition, keyProperty, GUIContent.none, false);
+				if(EditorGUI.EndChangeCheck())
+				{
+					for(int j = 0; j < dictSize; j ++)
+					{
+						if (j != i)
+						{
+							var keyProperty2 = keysProperty.GetArrayElementAtIndex(j);
+							if(EqualsValue(keyProperty2, keyProperty))
+							{
+								Debug.Log("key[" + i + "] == key[" + j + "]");
+							}
+						}
+					}
+				}
+
+				var valuePosition = linePosition;
+				valuePosition.xMin = EditorGUIUtility.labelWidth;
+				valuePosition.xMax -= buttonWidth;
+				EditorGUI.PropertyField(valuePosition, valueProperty, GUIContent.none, false);
 
 				buttonPosition = linePosition;
 				buttonPosition.xMin = buttonPosition.xMax - buttonWidth;
@@ -85,11 +105,6 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 					buttonAction = Action.Remove;
 					buttonActionIndex = i;
 				}
-
-				var valuePosition = linePosition;
-				valuePosition.xMin = EditorGUIUtility.labelWidth;
-				valuePosition.xMax -= buttonWidth;
-				EditorGUI.PropertyField(valuePosition, valueProperty, GUIContent.none, false);
 
 				linePosition.y += lineHeight;
 			}
@@ -132,6 +147,49 @@ public class SerializableDictionaryPropertyDrawer<TKey, TValue> : PropertyDrawer
 		}
 
 		return propertyHeight;
+	}
+
+	static Dictionary<SerializedPropertyType, string> ms_serializedPropertyValueAccessorsNameDict = new Dictionary<SerializedPropertyType, string>() {
+		{ SerializedPropertyType.Integer, "intValue" },
+		{ SerializedPropertyType.Boolean, "boolValue" },
+		{ SerializedPropertyType.Float, "floatValue" },
+		{ SerializedPropertyType.String, "stringValue" },
+		{ SerializedPropertyType.Color, "colorValue" },
+		{ SerializedPropertyType.ObjectReference, "objectReferenceValue" },
+		{ SerializedPropertyType.LayerMask, "intValue" },
+		{ SerializedPropertyType.Enum, "intValue" },
+		{ SerializedPropertyType.Vector2, "vector2Value" },
+		{ SerializedPropertyType.Vector3, "vector3Value" },
+		{ SerializedPropertyType.Vector4, "vector4Value" },
+		{ SerializedPropertyType.Rect, "rectValue" },
+		{ SerializedPropertyType.ArraySize, "intValue" },
+		{ SerializedPropertyType.Character, "intValue" },
+		{ SerializedPropertyType.AnimationCurve, "animationCurveValue" },
+		{ SerializedPropertyType.Bounds, "boundsValue" },
+		{ SerializedPropertyType.Quaternion, "quaternionValue" },
+	};
+	static Type ms_serializedPropertyType = typeof(SerializedProperty);
+	static Dictionary<SerializedPropertyType, PropertyInfo> ms_serializedPropertyValueAccessorsDict;
+
+	static SerializableDictionaryPropertyDrawer()
+	{
+		ms_serializedPropertyValueAccessorsDict	= new Dictionary<SerializedPropertyType, PropertyInfo>();
+		BindingFlags flags = BindingFlags.Instance | BindingFlags.Public;
+
+		foreach(var kvp in ms_serializedPropertyValueAccessorsNameDict)
+		{
+			PropertyInfo propertyInfo = ms_serializedPropertyType.GetProperty(kvp.Value, flags);
+			ms_serializedPropertyValueAccessorsDict.Add(kvp.Key, propertyInfo);
+		}
+	}
+
+	static bool EqualsValue(SerializedProperty p1, SerializedProperty p2)
+	{
+		if(p1.propertyType != p2.propertyType)
+			return false;
+
+		PropertyInfo propertyInfo = ms_serializedPropertyValueAccessorsDict[p1.propertyType];
+		return object.Equals(propertyInfo.GetValue(p1, null), propertyInfo.GetValue(p2, null));
 	}
 }
 

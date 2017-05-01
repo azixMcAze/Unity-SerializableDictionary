@@ -320,10 +320,3 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		}
 	}
 }
-
-[CustomPropertyDrawer(typeof(SerializableDictionary<,>))]
-[CustomPropertyDrawer(typeof(DictionaryTest.StringStringDictionary))]
-[CustomPropertyDrawer(typeof(DictionaryTest.ColorStringDictionary))]
-[CustomPropertyDrawer(typeof(DictionaryTest.StringColorDictionary))]
-[CustomPropertyDrawer(typeof(DictionaryTest.StringMyClassDictionary))]
-public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}

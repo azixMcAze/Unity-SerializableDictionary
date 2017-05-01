@@ -31,6 +31,8 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 
 	public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 	{
+		// Debug.Log(DebugUtilsEditor.ToString(property));
+
 		label = EditorGUI.BeginProperty(position, label, property);
 
 		Action buttonAction = Action.None;
@@ -43,11 +45,11 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		{
 			keysProperty.InsertArrayElementAtIndex(m_duplicatedKeyIndex1);
 			var keyProperty = keysProperty.GetArrayElementAtIndex(m_duplicatedKeyIndex1);
-			SetPropertyValue(keyProperty, m_duplicatedKey, true, m_duplicatedKeyIndex1);
+			SetPropertyValue(keyProperty, m_duplicatedKey);
 
 			valuesProperty.InsertArrayElementAtIndex(m_duplicatedKeyIndex1);
 			var valueProperty = valuesProperty.GetArrayElementAtIndex(m_duplicatedKeyIndex1);
-			SetPropertyValue(valueProperty, m_duplicatedKeyValue, true, m_duplicatedKeyIndex1);
+			SetPropertyValue(valueProperty, m_duplicatedKeyValue);
 		}
 
 		var buttonWidth = m_buttonStyle.CalcSize(m_iconPlus).x;
@@ -141,11 +143,11 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			for(int j = i + 1; j < dictSize; j ++)
 			{
 				var keyProperty2 = keysProperty.GetArrayElementAtIndex(j);
-				if(EqualsValue(keyProperty2, keyProperty, true, i, j))
+				if(EqualsValue(keyProperty2, keyProperty))
 				{
-					m_duplicatedKey = GetPropertyValue(keyProperty, true, i);
+					m_duplicatedKey = GetPropertyValue(keyProperty);
 					var valueProperty = valuesProperty.GetArrayElementAtIndex(i);
-					m_duplicatedKeyValue = GetPropertyValue(valueProperty, false, i);
+					m_duplicatedKeyValue = GetPropertyValue(valueProperty);
 					float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
 					float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
 					float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
@@ -224,15 +226,15 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		}
 	}
 
-	bool EqualsValue(SerializedProperty p1, SerializedProperty p2, bool keys, int index1, int index2)
+	bool EqualsValue(SerializedProperty p1, SerializedProperty p2)
 	{
 		if(p1.propertyType != p2.propertyType)
 			return false;
 
-		return object.Equals(GetPropertyValue(p1, keys, index1), GetPropertyValue(p2, keys, index2));
+		return object.Equals(GetPropertyValue(p1), GetPropertyValue(p2));
 	}
 
-	object GetPropertyValue(SerializedProperty p, bool key, int index)
+	object GetPropertyValue(SerializedProperty p)
 	{
 		PropertyInfo propertyInfo;
 		if(ms_serializedPropertyValueAccessorsDict.TryGetValue(p.propertyType, out propertyInfo))
@@ -241,44 +243,81 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		}
 		else
 		{
-			return GetPropertyValueReflection(p, key, index);
+			if(p.isArray)
+				return GetPropertyValueArray(p);
+			else
+				return GetPropertyValueGeneric(p);
 		}
 	}
 
-	void SetPropertyValue(SerializedProperty p, object v, bool key, int index)
+	void SetPropertyValue(SerializedProperty p, object v)
 	{
-		Debug.Log("set " + p.propertyPath + " = " + v.ToString());
-		PropertyInfo propertyInfo = ms_serializedPropertyValueAccessorsDict[p.propertyType];
-		propertyInfo.SetValue(p, v, null);
-	}
-
-	object m_dictionaryInstance;
-	FieldInfo m_keysField;
-	FieldInfo m_valuesField;
-
-	void EnsureFieldInfos(SerializedProperty property)
-	{
-		if(m_keysField == null || m_valuesField == null)
+		PropertyInfo propertyInfo;
+		if(ms_serializedPropertyValueAccessorsDict.TryGetValue(p.propertyType, out propertyInfo))
 		{
-			UnityEngine.Object scriptInstance = property.serializedObject.targetObject;
-			Type scriptType = scriptInstance.GetType();
-			BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
-			string[] path = property.propertyPath.Split('.');
-			FieldInfo dictionaryField = scriptType.GetField(path[0], flags);
-			m_dictionaryInstance = dictionaryField.GetValue(scriptInstance);
-			Type dictionaryType = dictionaryField.FieldType.BaseType;
-			m_keysField = dictionaryType.GetField(KeysFieldName, flags);
-			m_valuesField = dictionaryType.GetField(ValuesFieldName, flags);
+			propertyInfo.SetValue(p, v, null);
+		}
+		else
+		{
+			if(p.isArray)
+				SetPropertyValueArray(p, v);
+			else
+				SetPropertyValueGeneric(p, v);
 		}
 	}
 
-	object GetPropertyValueReflection(SerializedProperty property, bool key, int index)
+	object GetPropertyValueArray(SerializedProperty property)
 	{
-		EnsureFieldInfos(property);
+		object[] array = new object[property.arraySize];
+		for(int i = 0; i < property.arraySize; i++)
+		{
+			SerializedProperty item = property.GetArrayElementAtIndex(i);
+			array[i] = GetPropertyValue(item);
+		}
+		return array;
+	}
 
-		FieldInfo arrayField = key ? m_keysField : m_valuesField;
-		Array array = (Array)arrayField.GetValue(m_dictionaryInstance);
-		return array.GetValue(index);
+	object GetPropertyValueGeneric(SerializedProperty property)
+	{
+		Dictionary<string, object> dict = new Dictionary<string, object>();
+		var iterator = property.Copy();
+		if(iterator.Next(true))
+		{
+			var end = property.GetEndProperty();
+			do
+			{
+				string path = iterator.propertyPath;
+				object value = GetPropertyValue(iterator);
+				dict.Add(path, value);
+			} while(iterator.Next(false) && iterator.propertyPath != end.propertyPath);
+		}
+		return dict;
+	}
+
+	void SetPropertyValueArray(SerializedProperty property, object v)
+	{
+		object[] array = (object[]) v;
+		property.arraySize = array.Length;
+		for(int i = 0; i < property.arraySize; i++)
+		{
+			SerializedProperty item = property.GetArrayElementAtIndex(i);
+			SetPropertyValue(item, array[i]);
+		}
+	}
+
+	void SetPropertyValueGeneric(SerializedProperty property, object v)
+	{
+		Dictionary<string, object> dict = (Dictionary<string, object>) v;
+		var iterator = property.Copy();
+		if(iterator.Next(true))
+		{
+			var end = property.GetEndProperty();
+			do
+			{
+				string path = iterator.propertyPath;
+				SetPropertyValue(iterator, dict[path]);
+			} while(iterator.Next(false) && iterator.propertyPath != end.propertyPath);
+		}
 	}
 }
 
@@ -286,5 +325,5 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 [CustomPropertyDrawer(typeof(DictionaryTest.StringStringDictionary))]
 [CustomPropertyDrawer(typeof(DictionaryTest.ColorStringDictionary))]
 [CustomPropertyDrawer(typeof(DictionaryTest.StringColorDictionary))]
-// [CustomPropertyDrawer(typeof(DictionaryTest.StringMyClassDictionary))]
+[CustomPropertyDrawer(typeof(DictionaryTest.StringMyClassDictionary))]
 public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}

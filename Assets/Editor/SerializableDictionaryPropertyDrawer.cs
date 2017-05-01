@@ -16,11 +16,11 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 	GUIContent m_warningIcon = new GUIContent("!");
 	GUIStyle m_buttonStyle = GUIStyle.none;
 
-	object m_duplicatedKey = null;
-	object m_duplicatedKeyValue = null;
-	int m_duplicatedKeyIndex1 = -1 ;
-	int m_duplicatedKeyIndex2 = -1 ;
-	float m_duplicatedKeyLineHeight = 0f;
+	object m_conflictKey = null;
+	object m_conflictValue1 = null;
+	int m_conflictIndex1 = -1 ;
+	int m_conflictIndex2 = -1 ;
+	float m_conflictLineHeight = 0f;
 
 	enum Action
 	{
@@ -39,15 +39,15 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		var keysProperty = property.FindPropertyRelative(KeysFieldName);
 		var valuesProperty = property.FindPropertyRelative(ValuesFieldName);
 
-		if(m_duplicatedKey != null)
+		if(m_conflictKey != null)
 		{
-			keysProperty.InsertArrayElementAtIndex(m_duplicatedKeyIndex1);
-			var keyProperty = keysProperty.GetArrayElementAtIndex(m_duplicatedKeyIndex1);
-			SetPropertyValue(keyProperty, m_duplicatedKey);
+			keysProperty.InsertArrayElementAtIndex(m_conflictIndex1);
+			var keyProperty = keysProperty.GetArrayElementAtIndex(m_conflictIndex1);
+			SetPropertyValue(keyProperty, m_conflictKey);
 
-			valuesProperty.InsertArrayElementAtIndex(m_duplicatedKeyIndex1);
-			var valueProperty = valuesProperty.GetArrayElementAtIndex(m_duplicatedKeyIndex1);
-			SetPropertyValue(valueProperty, m_duplicatedKeyValue);
+			valuesProperty.InsertArrayElementAtIndex(m_conflictIndex1);
+			var valueProperty = valuesProperty.GetArrayElementAtIndex(m_conflictIndex1);
+			SetPropertyValue(valueProperty, m_conflictValue1);
 		}
 
 		var buttonWidth = m_buttonStyle.CalcSize(m_iconPlus).x;
@@ -103,7 +103,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 					buttonActionIndex = i;
 				}
 
-				if(i == m_duplicatedKeyIndex1 || i == m_duplicatedKeyIndex2)
+				if(i == m_conflictIndex1 || i == m_conflictIndex2)
 				{
 					var iconPosition = linePosition;
 					valuePosition.xMax = m_buttonStyle.CalcSize(m_warningIcon).x;
@@ -127,11 +127,11 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			valuesProperty.DeleteArrayElementAtIndex(buttonActionIndex);
 		}
 
-		m_duplicatedKey = null;
-		m_duplicatedKeyValue = null;
-		m_duplicatedKeyIndex1 = -1;
-		m_duplicatedKeyIndex2 = -1;
-		m_duplicatedKeyLineHeight = 0f;
+		m_conflictKey = null;
+		m_conflictValue1 = null;
+		m_conflictIndex1 = -1;
+		m_conflictIndex2 = -1;
+		m_conflictLineHeight = 0f;
 		dictSize = keysProperty.arraySize;
 
 		for(int i = 0; i < dictSize; ++i)
@@ -143,15 +143,15 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				var keyProperty2 = keysProperty.GetArrayElementAtIndex(j);
 				if(EqualsValue(keyProperty2, keyProperty))
 				{
-					m_duplicatedKey = GetPropertyValue(keyProperty);
+					m_conflictKey = GetPropertyValue(keyProperty);
 					var valueProperty = valuesProperty.GetArrayElementAtIndex(i);
-					m_duplicatedKeyValue = GetPropertyValue(valueProperty);
+					m_conflictValue1 = GetPropertyValue(valueProperty);
 					float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
 					float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
 					float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
-					m_duplicatedKeyLineHeight = lineHeight;
-					m_duplicatedKeyIndex1 = i;
-					m_duplicatedKeyIndex2 = j;
+					m_conflictLineHeight = lineHeight;
+					m_conflictIndex1 = i;
+					m_conflictIndex2 = j;
 
 					break;
 				}
@@ -180,9 +180,9 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				propertyHeight += lineHeight;
 			}
 
-			if(m_duplicatedKey != null)
+			if(m_conflictKey != null)
 			{
-				propertyHeight += m_duplicatedKeyLineHeight;
+				propertyHeight += m_conflictLineHeight;
 			}
 		}
 

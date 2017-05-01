@@ -153,10 +153,11 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 					m_conflictIndex1 = i;
 					m_conflictIndex2 = j;
 
-					break;
+					goto breakLoops;
 				}
 			}
 		}
+		breakLoops:
 
 		EditorGUI.EndProperty();
 	}

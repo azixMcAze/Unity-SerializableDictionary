@@ -31,8 +31,6 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 
 	public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 	{
-		// Debug.Log(DebugUtilsEditor.ToString(property));
-
 		label = EditorGUI.BeginProperty(position, label, property);
 
 		Action buttonAction = Action.None;
@@ -181,11 +179,11 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
 				propertyHeight += lineHeight;
 			}
-		}
 
-		if(m_duplicatedKey != null)
-		{
-			propertyHeight += m_duplicatedKeyLineHeight;
+			if(m_duplicatedKey != null)
+			{
+				propertyHeight += m_duplicatedKeyLineHeight;
+			}
 		}
 
 		return propertyHeight;

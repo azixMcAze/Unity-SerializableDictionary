@@ -72,7 +72,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			}
 
 			EditorGUI.indentLevel++;
-			var linePosition = EditorGUI.IndentedRect(position);
+			var linePosition = position;
 			linePosition.y += EditorGUIUtility.singleLineHeight;
 
 			for(int i = 0; i < dictSize; ++i)

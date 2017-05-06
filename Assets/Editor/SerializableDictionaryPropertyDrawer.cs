@@ -79,17 +79,18 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			{
 				var keyProperty = keysProperty.GetArrayElementAtIndex(i);
 				var valueProperty = valuesProperty.GetArrayElementAtIndex(i);
+
+				// linePosition.height = lineHeight;
+
 				float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
-				float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
-
-				float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
-				linePosition.height = lineHeight;
-
 				var keyPosition = linePosition;
+				keyPosition.height = keyPropertyHeight;
 				keyPosition.xMax = EditorGUIUtility.labelWidth;
 				EditorGUI.PropertyField(keyPosition, keyProperty, GUIContent.none, false);
 
+				float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
 				var valuePosition = linePosition;
+				valuePosition.height = valuePropertyHeight;
 				valuePosition.xMin = EditorGUIUtility.labelWidth;
 				valuePosition.xMax -= buttonWidth;
 				EditorGUI.PropertyField(valuePosition, valueProperty, GUIContent.none, false);
@@ -110,6 +111,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 					GUI.Label(iconPosition, m_warningIcon);
 				}
 
+				float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
 				linePosition.y += lineHeight;
 			}
 

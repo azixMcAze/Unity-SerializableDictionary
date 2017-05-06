@@ -298,9 +298,9 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			var end = property.GetEndProperty();
 			do
 			{
-				string path = iterator.propertyPath;
+				string name = iterator.name;
 				object value = GetPropertyValue(iterator);
-				dict.Add(path, value);
+				dict.Add(name, value);
 			} while(iterator.Next(false) && iterator.propertyPath != end.propertyPath);
 		}
 		return dict;
@@ -326,8 +326,8 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			var end = property.GetEndProperty();
 			do
 			{
-				string path = iterator.propertyPath;
-				SetPropertyValue(iterator, dict[path]);
+				string name = iterator.name;
+				SetPropertyValue(iterator, dict[name]);
 			} while(iterator.Next(false) && iterator.propertyPath != end.propertyPath);
 		}
 	}

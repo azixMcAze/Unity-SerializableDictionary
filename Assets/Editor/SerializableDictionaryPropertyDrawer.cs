@@ -11,10 +11,10 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 	const string KeysFieldName = "m_keys";
 	const string ValuesFieldName = "m_values";
 
-	GUIContent m_iconPlus = EditorGUIUtility.IconContent ("Toolbar Plus", "|Add");
-	GUIContent m_iconMinus = EditorGUIUtility.IconContent ("Toolbar Minus", "|Remove");
-	GUIContent m_warningIcon = new GUIContent("!");
-	GUIStyle m_buttonStyle = GUIStyle.none;
+	static GUIContent m_iconPlus = EditorGUIUtility.IconContent ("Toolbar Plus", "|Add entry");
+	static GUIContent m_iconMinus = EditorGUIUtility.IconContent ("Toolbar Minus", "|Remove entry");
+	static GUIContent m_warningIcon = EditorGUIUtility.IconContent ("console.warnicon.sml", "|Conflicting keys");
+	static GUIStyle m_buttonStyle = GUIStyle.none;
 
 	object m_conflictKey = null;
 	object m_conflictValue2 = null;
@@ -84,8 +84,6 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				var keyProperty = keyArrayProperty.GetArrayElementAtIndex(i);
 				var valueProperty = valueArrayProperty.GetArrayElementAtIndex(i);
 
-				// linePosition.height = lineHeight;
-
 				float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
 				var keyPosition = linePosition;
 				keyPosition.height = keyPropertyHeight;
@@ -111,7 +109,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				if(i == m_conflictIndex1 || i == m_conflictIndex2)
 				{
 					var iconPosition = linePosition;
-					valuePosition.xMax = m_buttonStyle.CalcSize(m_warningIcon).x;
+					iconPosition.size =  m_buttonStyle.CalcSize(m_warningIcon);
 					GUI.Label(iconPosition, m_warningIcon);
 				}
 

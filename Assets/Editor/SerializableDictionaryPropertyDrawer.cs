@@ -234,6 +234,8 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			PropertyInfo propertyInfo = serializedPropertyType.GetProperty(kvp.Value, flags);
 			ms_serializedPropertyValueAccessorsDict.Add(kvp.Key, propertyInfo);
 		}
+
+		m_iconMinus.tooltip = "Remove dictionary entry";
 	}
 
 	bool EqualsValue(SerializedProperty p1, SerializedProperty p2)

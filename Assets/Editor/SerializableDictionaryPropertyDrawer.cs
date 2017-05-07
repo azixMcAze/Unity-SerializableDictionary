@@ -5,7 +5,6 @@ using UnityEditor;
 using System.Reflection;
 using System;
 
-// [CustomPropertyDrawer(typeof(SerializableDictionaryParent), true)]
 public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 {
 	const string KeysFieldName = "m_keys";
@@ -178,8 +177,8 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 
 		if (property.isExpanded)
 		{
-			var keysProperty = property.FindPropertyRelative("m_keys");
-			var valuesProperty = property.FindPropertyRelative("m_values");
+			var keysProperty = property.FindPropertyRelative(KeysFieldName);
+			var valuesProperty = property.FindPropertyRelative(ValuesFieldName);
 			int n = keysProperty.arraySize;
 
             for (int i = 0; i < n; ++i)

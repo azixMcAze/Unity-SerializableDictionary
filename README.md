@@ -6,3 +6,5 @@ and they won't be instantiated at startup. A classic workaround is to store the 
 and construct the dictionary at startup.
 
 This project provides a generic dictionary class and its custom property drawer that solves this problem.
+
+![screenshot 1](http://azixmcaze.github.io/files/SerializableDictionary_screenshot1.png)

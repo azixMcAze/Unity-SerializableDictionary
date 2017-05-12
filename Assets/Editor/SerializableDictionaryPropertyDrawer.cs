@@ -16,9 +16,9 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 	static GUIStyle m_buttonStyle = GUIStyle.none;
 
 	object m_conflictKey = null;
-	object m_conflictValue2 = null;
-	int m_conflictIndex1 = -1 ;
-	int m_conflictIndex2 = -1 ;
+	object m_conflictValue = null;
+	int m_conflictIndex = -1 ;
+	int m_conflictOtherIndex = -1 ;
 	bool m_conflictKeyPropertyExpanded = false;
 	bool m_conflictValuePropertyExpanded = false;
 	float m_conflictLineHeight = 0f;
@@ -40,16 +40,16 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		var keyArrayProperty = property.FindPropertyRelative(KeysFieldName);
 		var valueArrayProperty = property.FindPropertyRelative(ValuesFieldName);
 
-		if(m_conflictIndex1 != -1 || m_conflictIndex2 != -1)
+		if(m_conflictIndex != -1 || m_conflictOtherIndex != -1)
 		{
-			keyArrayProperty.InsertArrayElementAtIndex(m_conflictIndex2);
-			var keyProperty = keyArrayProperty.GetArrayElementAtIndex(m_conflictIndex2);
+			keyArrayProperty.InsertArrayElementAtIndex(m_conflictIndex);
+			var keyProperty = keyArrayProperty.GetArrayElementAtIndex(m_conflictIndex);
 			SetPropertyValue(keyProperty, m_conflictKey);
 			keyProperty.isExpanded = m_conflictKeyPropertyExpanded;
 
-			valueArrayProperty.InsertArrayElementAtIndex(m_conflictIndex2);
-			var valueProperty = valueArrayProperty.GetArrayElementAtIndex(m_conflictIndex2);
-			SetPropertyValue(valueProperty, m_conflictValue2);
+			valueArrayProperty.InsertArrayElementAtIndex(m_conflictIndex);
+			var valueProperty = valueArrayProperty.GetArrayElementAtIndex(m_conflictIndex);
+			SetPropertyValue(valueProperty, m_conflictValue);
 			valueProperty.isExpanded = m_conflictValuePropertyExpanded;
 		}
 
@@ -105,7 +105,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 					buttonActionIndex = i;
 				}
 
-				if(i == m_conflictIndex1 || i == m_conflictIndex2)
+				if(i == m_conflictIndex || i == m_conflictOtherIndex)
 				{
 					var iconPosition = linePosition;
 					iconPosition.size =  m_buttonStyle.CalcSize(m_warningIcon);
@@ -131,9 +131,9 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		}
 
 		m_conflictKey = null;
-		m_conflictValue2 = null;
-		m_conflictIndex1 = -1;
-		m_conflictIndex2 = -1;
+		m_conflictValue = null;
+		m_conflictIndex = -1;
+		m_conflictOtherIndex = -1;
 		m_conflictLineHeight = 0f;
 		m_conflictKeyPropertyExpanded = false;
 		m_conflictValuePropertyExpanded = false;
@@ -145,19 +145,11 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 
 			if(keyProperty1.propertyType == SerializedPropertyType.ObjectReference && keyProperty1.objectReferenceValue == null)
 			{
-				m_conflictKey = keyProperty1.objectReferenceValue;
 				var valueProperty1 = valueArrayProperty.GetArrayElementAtIndex(i);
-				m_conflictValue2 = GetPropertyValue(valueProperty1);
-				float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty1);
-				float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty1);
-				float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
-				m_conflictLineHeight = lineHeight;
-				m_conflictIndex1 = -1;
-				m_conflictIndex2 = i;
-				m_conflictKeyPropertyExpanded = keyProperty1.isExpanded;
-				m_conflictValuePropertyExpanded = valueProperty1.isExpanded;
+				SaveProperty(keyProperty1, valueProperty1, i, -1);
 				valueArrayProperty.DeleteArrayElementAtIndex(i);
 				keyArrayProperty.DeleteArrayElementAtIndex(i);
+
 				break;
 			}
 
@@ -166,17 +158,8 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				var keyProperty2 = keyArrayProperty.GetArrayElementAtIndex(j);
 				if(EqualsValue(keyProperty2, keyProperty1))
 				{
-					m_conflictKey = GetPropertyValue(keyProperty2);
 					var valueProperty2 = valueArrayProperty.GetArrayElementAtIndex(j);
-					m_conflictValue2 = GetPropertyValue(valueProperty2);
-					float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty2);
-					float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty2);
-					float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
-					m_conflictLineHeight = lineHeight;
-					m_conflictIndex1 = i;
-					m_conflictIndex2 = j;
-					m_conflictKeyPropertyExpanded = keyProperty2.isExpanded;
-					m_conflictValuePropertyExpanded = valueProperty2.isExpanded;
+					SaveProperty(keyProperty2, valueProperty2, j, i);
 					valueArrayProperty.DeleteArrayElementAtIndex(j);
 					keyArrayProperty.DeleteArrayElementAtIndex(j);
 
@@ -187,6 +170,20 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		breakLoops:
 
 		EditorGUI.EndProperty();
+	}
+
+	void SaveProperty(SerializedProperty keyProperty, SerializedProperty valueProperty, int index, int otherIndex)
+	{
+		m_conflictKey = GetPropertyValue(keyProperty);
+		m_conflictValue = GetPropertyValue(valueProperty);
+		float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
+		float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
+		float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
+		m_conflictLineHeight = lineHeight;
+		m_conflictIndex = index;
+		m_conflictOtherIndex = otherIndex;
+		m_conflictKeyPropertyExpanded = keyProperty.isExpanded;
+		m_conflictValuePropertyExpanded = valueProperty.isExpanded;
 	}
 
 	public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -209,7 +206,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				propertyHeight += lineHeight;
 			}
 
-			if(m_conflictIndex1 != -1 || m_conflictIndex2 != -1)
+			if(m_conflictIndex != -1 || m_conflictOtherIndex != -1)
 			{
 				propertyHeight += m_conflictLineHeight;
 			}

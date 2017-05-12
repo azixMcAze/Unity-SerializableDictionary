@@ -10,6 +10,15 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
 	[SerializeField]
 	TValue[] m_values;
 
+	public void CopyFrom(IDictionary<TKey, TValue> dict)
+	{
+		this.Clear();
+		foreach (var kvp in dict)
+		{
+			this[kvp.Key] = kvp.Value;
+		}
+	}
+
 	public void OnAfterDeserialize()
 	{
 		if(m_keys != null && m_values != null && m_keys.Length == m_values.Length)

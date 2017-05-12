@@ -40,7 +40,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		var keyArrayProperty = property.FindPropertyRelative(KeysFieldName);
 		var valueArrayProperty = property.FindPropertyRelative(ValuesFieldName);
 
-		if(m_conflictIndex != -1 || m_conflictOtherIndex != -1)
+		if(m_conflictIndex != -1)
 		{
 			keyArrayProperty.InsertArrayElementAtIndex(m_conflictIndex);
 			var keyProperty = keyArrayProperty.GetArrayElementAtIndex(m_conflictIndex);
@@ -206,7 +206,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				propertyHeight += lineHeight;
 			}
 
-			if(m_conflictIndex != -1 || m_conflictOtherIndex != -1)
+			if(m_conflictIndex != -1)
 			{
 				propertyHeight += m_conflictLineHeight;
 			}

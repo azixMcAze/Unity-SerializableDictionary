@@ -54,7 +54,6 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		}
 
 		var buttonWidth = m_buttonStyle.CalcSize(m_iconPlus).x;
-		int dictSize = keyArrayProperty.arraySize;
 
 		var labelPosition = position;
 		labelPosition.height = EditorGUIUtility.singleLineHeight;
@@ -71,17 +70,18 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			if(GUI.Button(buttonPosition, m_iconPlus, m_buttonStyle))
 			{			
 				buttonAction = Action.Add;
-				buttonActionIndex = dictSize;
+				buttonActionIndex = keyArrayProperty.arraySize;
 			}
 
 			EditorGUI.indentLevel++;
 			var linePosition = position;
 			linePosition.y += EditorGUIUtility.singleLineHeight;
 
-			for(int i = 0; i < dictSize; ++i)
+			foreach(var entry in EnumerateEntries(keyArrayProperty, valueArrayProperty))
 			{
-				var keyProperty = keyArrayProperty.GetArrayElementAtIndex(i);
-				var valueProperty = valueArrayProperty.GetArrayElementAtIndex(i);
+				var keyProperty = entry.keyProperty;
+				var valueProperty = entry.valueProperty;
+				int i = entry.index;
 
 				float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
 				var keyPosition = linePosition;
@@ -138,14 +138,14 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		m_conflictKeyPropertyExpanded = false;
 		m_conflictValuePropertyExpanded = false;
 
-		dictSize = keyArrayProperty.arraySize;
-		for(int i = 0; i < dictSize; ++i)
+		foreach(var entry1 in EnumerateEntries(keyArrayProperty, valueArrayProperty))
 		{
-			var keyProperty1 = keyArrayProperty.GetArrayElementAtIndex(i);
+			var keyProperty1 = entry1.keyProperty;
+			int i = entry1.index;
 
 			if(keyProperty1.propertyType == SerializedPropertyType.ObjectReference && keyProperty1.objectReferenceValue == null)
 			{
-				var valueProperty1 = valueArrayProperty.GetArrayElementAtIndex(i);
+				var valueProperty1 = entry1.valueProperty;
 				SaveProperty(keyProperty1, valueProperty1, i, -1);
 				valueArrayProperty.DeleteArrayElementAtIndex(i);
 				keyArrayProperty.DeleteArrayElementAtIndex(i);
@@ -153,12 +153,14 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				break;
 			}
 
-			for(int j = i + 1; j < dictSize; j ++)
+			foreach(var entry2 in EnumerateEntries(keyArrayProperty, valueArrayProperty, i + 1))
 			{
-				var keyProperty2 = keyArrayProperty.GetArrayElementAtIndex(j);
+				var keyProperty2 = entry2.keyProperty;
+				int j = entry2.index;
+
 				if(EqualsValue(keyProperty2, keyProperty1))
-				{
-					var valueProperty2 = valueArrayProperty.GetArrayElementAtIndex(j);
+				{					
+					var valueProperty2 = entry2.valueProperty;
 					SaveProperty(keyProperty2, valueProperty2, j, i);
 					valueArrayProperty.DeleteArrayElementAtIndex(j);
 					keyArrayProperty.DeleteArrayElementAtIndex(j);
@@ -196,10 +198,10 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			var valuesProperty = property.FindPropertyRelative(ValuesFieldName);
 			int n = keysProperty.arraySize;
 
-            for (int i = 0; i < n; ++i)
+			foreach(var entry in EnumerateEntries(keysProperty, valuesProperty))
 			{
-				var keyProperty = keysProperty.GetArrayElementAtIndex(i);
-				var valueProperty = valuesProperty.GetArrayElementAtIndex(i);
+				var keyProperty = entry.keyProperty;
+				var valueProperty = entry.valueProperty;
 				float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
 				float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
 				float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
@@ -343,6 +345,37 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				string name = iterator.name;
 				SetPropertyValue(iterator, dict[name]);
 			} while(iterator.Next(false) && iterator.propertyPath != end.propertyPath);
+		}
+	}
+
+	struct EnumerationEntry
+	{
+		public SerializedProperty keyProperty;
+		public SerializedProperty valueProperty;
+		public int index;
+
+		public EnumerationEntry(SerializedProperty keyProperty, SerializedProperty valueProperty, int index)
+		{
+			this.keyProperty = keyProperty;
+			this.valueProperty = valueProperty;
+			this.index = index;
+		}
+	}
+
+	static IEnumerable<EnumerationEntry> EnumerateEntries(SerializedProperty keyArrayProperty, SerializedProperty valueArrayProperty, int startIndex = 0)
+	{
+		if(keyArrayProperty.arraySize > startIndex)
+		{
+			int index = startIndex;
+			var keyProperty = keyArrayProperty.GetArrayElementAtIndex(startIndex);
+			var valueProperty = valueArrayProperty.GetArrayElementAtIndex(startIndex);
+			var endProperty = keyArrayProperty.GetEndProperty();
+
+			do
+			{
+				yield return new EnumerationEntry(keyProperty, valueProperty, index);
+				index++;
+			} while(keyProperty.Next(false) && valueProperty.Next(false) && !SerializedProperty.EqualContents(keyProperty, endProperty));
 		}
 	}
 }

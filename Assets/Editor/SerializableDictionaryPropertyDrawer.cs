@@ -40,7 +40,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		var keyArrayProperty = property.FindPropertyRelative(KeysFieldName);
 		var valueArrayProperty = property.FindPropertyRelative(ValuesFieldName);
 
-		if(m_conflictKey != null)
+		if(m_conflictIndex1 != -1 || m_conflictIndex2 != -1)
 		{
 			keyArrayProperty.InsertArrayElementAtIndex(m_conflictIndex2);
 			var keyProperty = keyArrayProperty.GetArrayElementAtIndex(m_conflictIndex2);
@@ -143,6 +143,24 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		{
 			var keyProperty1 = keyArrayProperty.GetArrayElementAtIndex(i);
 
+			if(keyProperty1.propertyType == SerializedPropertyType.ObjectReference && keyProperty1.objectReferenceValue == null)
+			{
+				m_conflictKey = keyProperty1.objectReferenceValue;
+				var valueProperty1 = valueArrayProperty.GetArrayElementAtIndex(i);
+				m_conflictValue2 = GetPropertyValue(valueProperty1);
+				float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty1);
+				float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty1);
+				float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
+				m_conflictLineHeight = lineHeight;
+				m_conflictIndex1 = -1;
+				m_conflictIndex2 = i;
+				m_conflictKeyPropertyExpanded = keyProperty1.isExpanded;
+				m_conflictValuePropertyExpanded = valueProperty1.isExpanded;
+				valueArrayProperty.DeleteArrayElementAtIndex(i);
+				keyArrayProperty.DeleteArrayElementAtIndex(i);
+				break;
+			}
+
 			for(int j = i + 1; j < dictSize; j ++)
 			{
 				var keyProperty2 = keyArrayProperty.GetArrayElementAtIndex(j);
@@ -191,7 +209,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				propertyHeight += lineHeight;
 			}
 
-			if(m_conflictKey != null)
+			if(m_conflictIndex1 != -1 || m_conflictIndex2 != -1)
 			{
 				propertyHeight += m_conflictLineHeight;
 			}

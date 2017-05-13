@@ -69,11 +69,13 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			var buttonPosition = position;
 			buttonPosition.xMin = buttonPosition.xMax - buttonWidth;
 			buttonPosition.height = EditorGUIUtility.singleLineHeight;
+			EditorGUI.BeginDisabledGroup(m_conflictIndex != -1);
 			if(GUI.Button(buttonPosition, m_iconPlus, m_buttonStyle))
 			{			
 				buttonAction = Action.Add;
 				buttonActionIndex = keyArrayProperty.arraySize;
 			}
+			EditorGUI.EndDisabledGroup();
 
 			EditorGUI.indentLevel++;
 			var linePosition = position;

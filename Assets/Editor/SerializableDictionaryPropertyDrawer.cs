@@ -262,7 +262,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		return object.Equals(GetPropertyValue(p1), GetPropertyValue(p2));
 	}
 
-	object GetPropertyValue(SerializedProperty p)
+	public static object GetPropertyValue(SerializedProperty p)
 	{
 		PropertyInfo propertyInfo;
 		if(ms_serializedPropertyValueAccessorsDict.TryGetValue(p.propertyType, out propertyInfo))
@@ -278,7 +278,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		}
 	}
 
-	void SetPropertyValue(SerializedProperty p, object v)
+	static void SetPropertyValue(SerializedProperty p, object v)
 	{
 		PropertyInfo propertyInfo;
 		if(ms_serializedPropertyValueAccessorsDict.TryGetValue(p.propertyType, out propertyInfo))
@@ -294,7 +294,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		}
 	}
 
-	object GetPropertyValueArray(SerializedProperty property)
+	static object GetPropertyValueArray(SerializedProperty property)
 	{
 		object[] array = new object[property.arraySize];
 		for(int i = 0; i < property.arraySize; i++)
@@ -305,7 +305,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		return array;
 	}
 
-	object GetPropertyValueGeneric(SerializedProperty property)
+	static object GetPropertyValueGeneric(SerializedProperty property)
 	{
 		Dictionary<string, object> dict = new Dictionary<string, object>();
 		var iterator = property.Copy();
@@ -322,7 +322,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		return dict;
 	}
 
-	void SetPropertyValueArray(SerializedProperty property, object v)
+	static void SetPropertyValueArray(SerializedProperty property, object v)
 	{
 		object[] array = (object[]) v;
 		property.arraySize = array.Length;
@@ -333,7 +333,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		}
 	}
 
-	void SetPropertyValueGeneric(SerializedProperty property, object v)
+	static void SetPropertyValueGeneric(SerializedProperty property, object v)
 	{
 		Dictionary<string, object> dict = (Dictionary<string, object>) v;
 		var iterator = property.Copy();

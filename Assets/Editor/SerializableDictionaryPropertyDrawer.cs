@@ -274,7 +274,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			ms_serializedPropertyValueAccessorsDict.Add(kvp.Key, propertyInfo);
 		}
 
-		m_iconMinus.tooltip = "Remove dictionary entry";
+		m_iconMinus.tooltip = "Remove entry";
 	}
 
 	static void DeleteArrayElementAtIndex(SerializedProperty arrayProperty, int index)

@@ -254,7 +254,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		m_iconMinus.tooltip = "Remove dictionary entry";
 	}
 
-	bool EqualsValue(SerializedProperty p1, SerializedProperty p2)
+	static bool EqualsValue(SerializedProperty p1, SerializedProperty p2)
 	{
 		if(p1.propertyType != p2.propertyType)
 			return false;

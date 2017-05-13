@@ -13,7 +13,7 @@ public static class DebugUtilsEditor
 		var end = property.GetEndProperty();
 		do
 		{
-			sb.AppendLine(iterator.propertyPath + " " + iterator.type + " " + iterator.propertyType.ToString());
+			sb.AppendLine(iterator.propertyPath + " (" + iterator.type + " " + iterator.propertyType + ") = " + SerializableDictionaryPropertyDrawer.GetPropertyValue(iterator) + (iterator.isArray ? " (" + iterator.arrayElementType + ")" : ""));
 		} while(iterator.Next(true) && iterator.propertyPath != end.propertyPath);
 		return sb.ToString();
 	}

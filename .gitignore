@@ -10,3 +10,8 @@
 /*.user
 /*.unityproj
 /*.booproj
+
+/*.unitypackage
+
+/Assets/AssetStoreTools
+/Assets/AssetStoreTools.meta

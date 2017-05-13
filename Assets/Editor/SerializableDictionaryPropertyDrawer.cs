@@ -126,8 +126,8 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		}
 		else if(buttonAction == Action.Remove)
 		{
-			keyArrayProperty.DeleteArrayElementAtIndex(buttonActionIndex);
-			valueArrayProperty.DeleteArrayElementAtIndex(buttonActionIndex);
+			DeleteArrayElementAtIndex(keyArrayProperty, buttonActionIndex);
+			DeleteArrayElementAtIndex(valueArrayProperty, buttonActionIndex);
 		}
 
 		m_conflictKey = null;
@@ -147,8 +147,8 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			{
 				var valueProperty1 = entry1.valueProperty;
 				SaveProperty(keyProperty1, valueProperty1, i, -1);
-				valueArrayProperty.DeleteArrayElementAtIndex(i);
-				keyArrayProperty.DeleteArrayElementAtIndex(i);
+				DeleteArrayElementAtIndex(valueArrayProperty, i);
+				DeleteArrayElementAtIndex(keyArrayProperty, i);
 
 				break;
 			}
@@ -162,8 +162,8 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				{					
 					var valueProperty2 = entry2.valueProperty;
 					SaveProperty(keyProperty2, valueProperty2, j, i);
-					valueArrayProperty.DeleteArrayElementAtIndex(j);
-					keyArrayProperty.DeleteArrayElementAtIndex(j);
+					DeleteArrayElementAtIndex(keyArrayProperty, j);
+					DeleteArrayElementAtIndex(valueArrayProperty, j);
 
 					goto breakLoops;
 				}
@@ -252,6 +252,18 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		}
 
 		m_iconMinus.tooltip = "Remove dictionary entry";
+	}
+
+	static void DeleteArrayElementAtIndex(SerializedProperty arrayProperty, int index)
+	{
+		var property = arrayProperty.GetArrayElementAtIndex(index);
+		// if(arrayProperty.arrayElementType.StartsWith("PPtr<$"))
+		if(property.propertyType == SerializedPropertyType.ObjectReference)
+		{
+			property.objectReferenceValue = null;
+		}
+
+		arrayProperty.DeleteArrayElementAtIndex(index);
 	}
 
 	static bool EqualsValue(SerializedProperty p1, SerializedProperty p2)

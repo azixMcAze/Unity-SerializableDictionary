@@ -142,8 +142,9 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		{
 			var keyProperty1 = entry1.keyProperty;
 			int i = entry1.index;
+			object keyProperty1Value = GetPropertyValue(keyProperty1);
 
-			if(keyProperty1.propertyType == SerializedPropertyType.ObjectReference && keyProperty1.objectReferenceValue == null)
+			if(keyProperty1Value == null)
 			{
 				var valueProperty1 = entry1.valueProperty;
 				SaveProperty(keyProperty1, valueProperty1, i, -1);
@@ -153,12 +154,14 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				break;
 			}
 
+
 			foreach(var entry2 in EnumerateEntries(keyArrayProperty, valueArrayProperty, i + 1))
 			{
 				var keyProperty2 = entry2.keyProperty;
 				int j = entry2.index;
+				object keyProperty2Value = GetPropertyValue(keyProperty2);
 
-				if(EqualsValue(keyProperty2, keyProperty1))
+				if(object.Equals(keyProperty1Value, keyProperty2Value))
 				{					
 					var valueProperty2 = entry2.valueProperty;
 					SaveProperty(keyProperty2, valueProperty2, j, i);
@@ -264,14 +267,6 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		}
 
 		arrayProperty.DeleteArrayElementAtIndex(index);
-	}
-
-	static bool EqualsValue(SerializedProperty p1, SerializedProperty p2)
-	{
-		if(p1.propertyType != p2.propertyType)
-			return false;
-
-		return object.Equals(GetPropertyValue(p1), GetPropertyValue(p2));
 	}
 
 	public static object GetPropertyValue(SerializedProperty p)

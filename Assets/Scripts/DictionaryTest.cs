@@ -12,9 +12,11 @@ public class DictionaryTest : MonoBehaviour {
 		set { m_testDictionary.CopyFrom (value); }
 	}
 
+	public ObjectColorDictionary m_testDictionary2;
+
 	void Reset ()
 	{
-//		m_testDictionary = new StringStringDictionary() { {"a", "b"}, {"c", "d"} };
-		TestDictionary = new Dictionary<string, string>() { {"a", "b"}, {"c", "d"} };
+		TestDictionary = new Dictionary<string, string>() { {"first key", "value A"}, {"second key", "value B"}, {"third key", "value C"} };
+		m_testDictionary2 = new ObjectColorDictionary() { {gameObject, Color.blue}, {this, Color.red} };
 	}
 }

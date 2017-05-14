@@ -221,7 +221,6 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		{
 			var keysProperty = property.FindPropertyRelative(KeysFieldName);
 			var valuesProperty = property.FindPropertyRelative(ValuesFieldName);
-			int n = keysProperty.arraySize;
 
 			foreach(var entry in EnumerateEntries(keysProperty, valuesProperty))
 			{

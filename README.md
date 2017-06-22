@@ -23,11 +23,11 @@ This project provides a generic dictionary class and its custom property drawer 
 
 ## Limitations
 - A derived class has to be created for each specialization of `SerializableDictionary`
-- Using complex types as keys or values (like a `Quaternion` or any serializable class) result in non-optimal display in the inspector
+- Types drawn with a folding arrow (such as `Quaternion` or any serializable class) used as keys or values will have an empty label next to the arrow.
 
     ![Complex type screenshot](http://azixmcaze.github.io/files/SerializableDictionary_screenshot4.png)
 - Multiple editing of scripts using `SerializableDictionaries` in the inspector is not supported. The inspector will show the dictionnaries but data loss is likely to occur
-- The conflicting key detectiong does not work when using LayerMask as key.
+- The conflicting key detection does not work when using `LayerMask` as key. The `LayerMask` value is changed after the `CustomPropertyDrawer` execution.
 
 ## Usage
 

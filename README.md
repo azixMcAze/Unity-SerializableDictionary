@@ -22,11 +22,11 @@ This project provides a generic dictionary class and its custom property drawer 
     ![Null key screenshot](http://azixmcaze.github.io/files/SerializableDictionary_screenshot3.png)
 
 ## Limitations
-- A derived class has to be created for each specialization of `SerializableDictionary`
+- A non-generic derived class has to be created for each `<TKey, TValue>` combination you want to use. A `CustomPropertyDrawer` has to be declared for each of these classes.
 - Types drawn with a folding arrow (such as `Quaternion` or any serializable class) used as keys or values will have an empty label next to the arrow.
 
     ![Complex type screenshot](http://azixmcaze.github.io/files/SerializableDictionary_screenshot4.png)
-- Multiple editing of scripts using `SerializableDictionaries` in the inspector is not supported. The inspector will show the dictionnaries but data loss is likely to occur
+- Multiple editing of scripts using `SerializableDictionaries` in the inspector is not supported. The inspector will show the dictionnaries but data loss is likely to occur.
 - The conflicting key detection does not work when using `LayerMask` as key. The `LayerMask` value is changed after the `CustomPropertyDrawer` execution.
 
 ## Usage
@@ -41,7 +41,7 @@ Copy these files in your project:
         - `SerializableDictionaryPropertyDrawer.cs`
         - `UserSerializableDictionaries.cs` (optional)
 
-As Unity is unable to serialize generic types, create a derived class for each `SerializedDictionary` specialization you want.
+As Unity is unable to directly serialize generic types, create a derived class for each `SerializedDictionary` specialization you want.
 ```csharp
 [Serializable]
 public class StringStringDictionary : SerializableDictionary<string, string> {}

@@ -23,7 +23,7 @@ This project provides a generic dictionary class and its custom property drawer 
 
 ## Usage
 
-Unity cannot serialize generic types, you must create one concrete derived class for each dictionary type you want.
+As Unity is unable to serialize generic types, create a derived class for each `SerializedDictionary` specialization you want.
 ```csharp
 [Serializable]
 public class StringStringDictionary : SerializableDictionary<string, string> {}
@@ -32,7 +32,7 @@ public class StringStringDictionary : SerializableDictionary<string, string> {}
 public class MyScriptColorDictionary : SerializableDictionary<MyScript, Color> {}
 ```
 
-Then you have to declare a property drawer these new type by adding the `CustomPropertyDrawer` attribute to `SerializableDictionaryPropertyDrawer` of one of its derived class.
+Declare the custom property drawer for these new types by adding the `CustomPropertyDrawer` attribute to the `SerializableDictionaryPropertyDrawer` class or of one of its derived class.
 
 ```csharp
 [CustomPropertyDrawer(typeof(StringStringDictionary))]
@@ -40,9 +40,11 @@ Then you have to declare a property drawer these new type by adding the `CustomP
 public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
 ```
 
-It is recommended to create one derivate class in a separate file and a add the attributes to this class instead of modifying the original `SerializableDictionaryPropertyDrawer` class. You can the same class for all your derived dictionaries, no need to create one `CustomPropertyDrawer` for each
+It is recommended to create one derivate class in a separate file and add the attributes to this class instead of modifying the original `SerializableDictionaryPropertyDrawer` class.
+You can use the same class for all your `SerializableDictionary` specializations, there is no need to create a new one for each specialization.
 
-Use the dictionaries directly of through a property.
+Add the dictionaries to your scripts and access them directly of through a property.
+
 ```csharp
 public StringStringDictionary m_testDictionary1;
 

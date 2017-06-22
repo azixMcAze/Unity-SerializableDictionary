@@ -21,7 +21,22 @@ This project provides a generic dictionary class and its custom property drawer 
 
     ![screenshot 3](http://azixmcaze.github.io/files/SerializableDictionary_screenshot3.png)
 
+## Limitations
+- A derived class has to be created for each specialization of `SerializableDictionary`
+- Using complex types as keys or values (like a `Quaternion` or any serializable class) result in non-optimal display in the inspector
+- Multiple editing of scripts using `SerializableDictionaries` in the inspector is not supported. The inspector will show the dictionnaries but data loss is likely to occur
+
 ## Usage
+
+Copy these files in your project:
+- `Assets/`
+    - `Scripts/`
+        - `SerializableDictionary.cs`
+        - `UserSerializableDictionaryPropertyDrawer.cs` (optional)
+    - `Editor/`
+        - `DebugUtilsEditor.cs`
+        - `SerializableDictionaryPropertyDrawer.cs`
+        - `UserSerializableDictionaries.cs` (optional)
 
 As Unity is unable to serialize generic types, create a derived class for each `SerializedDictionary` specialization you want.
 ```csharp

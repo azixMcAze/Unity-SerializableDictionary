@@ -10,6 +10,18 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
 	[SerializeField]
 	TValue[] m_values;
 
+	public SerializableDictionary()
+	{
+	}
+
+	public SerializableDictionary(IDictionary<TKey, TValue> dict) : base(dict.Count)
+	{
+		foreach (var kvp in dict)
+		{
+			this[kvp.Key] = kvp.Value;
+		}
+	}
+
 	public void CopyFrom(IDictionary<TKey, TValue> dict)
 	{
 		this.Clear();

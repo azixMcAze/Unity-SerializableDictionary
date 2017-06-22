@@ -7,7 +7,7 @@ and construct the dictionary at startup.
 
 This project provides a generic dictionary class and its custom property drawer that solves this problem.
 
-![screenshot 1](http://azixmcaze.github.io/files/SerializableDictionary_screenshot1.png)
+![General screenshot](http://azixmcaze.github.io/files/SerializableDictionary_screenshot1.png)
 
 ## Features
 
@@ -17,13 +17,15 @@ This project provides a generic dictionary class and its custom property drawer 
 - It can be edited in the inspector without having to implement custom editors or property drawers.
 - The inspector will handle invalid dictionary keys such as duplicated or `null` keys and warn the user that data loss can occur if the keys are not fixed.
     
-    ![screenshot 2 ](http://azixmcaze.github.io/files/SerializableDictionary_screenshot2.png)
+    ![Conflicting keys screenshot](http://azixmcaze.github.io/files/SerializableDictionary_screenshot2.png)
 
-    ![screenshot 3](http://azixmcaze.github.io/files/SerializableDictionary_screenshot3.png)
+    ![Null key screenshot](http://azixmcaze.github.io/files/SerializableDictionary_screenshot3.png)
 
 ## Limitations
 - A derived class has to be created for each specialization of `SerializableDictionary`
 - Using complex types as keys or values (like a `Quaternion` or any serializable class) result in non-optimal display in the inspector
+
+    ![Complex type screenshot](http://azixmcaze.github.io/files/SerializableDictionary_screenshot4.png)
 - Multiple editing of scripts using `SerializableDictionaries` in the inspector is not supported. The inspector will show the dictionnaries but data loss is likely to occur
 
 ## Usage

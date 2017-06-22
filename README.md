@@ -7,7 +7,7 @@ and construct the dictionary at startup.
 
 This project provides a generic dictionary class and its custom property drawer that solves this problem.
 
-![General screenshot](http://azixmcaze.github.io/files/SerializableDictionary_screenshot1.png)
+![General screenshot](https://azixmcaze.github.io/Unity-SerializableDictionary/SerializableDictionary_screenshot1.png)
 
 ## Features
 
@@ -17,15 +17,15 @@ This project provides a generic dictionary class and its custom property drawer 
 - It can be edited in the inspector without having to implement custom editors or property drawers.
 - The inspector will handle invalid dictionary keys such as duplicated or `null` keys and warn the user that data loss can occur if the keys are not fixed.
     
-    ![Conflicting keys screenshot](http://azixmcaze.github.io/files/SerializableDictionary_screenshot2.png)
+    ![Conflicting keys screenshot](https://azixmcaze.github.io/Unity-SerializableDictionary/SerializableDictionary_screenshot2.png)
 
-    ![Null key screenshot](http://azixmcaze.github.io/files/SerializableDictionary_screenshot3.png)
+    ![Null key screenshot](https://azixmcaze.github.io/Unity-SerializableDictionary/SerializableDictionary_screenshot3.png)
 
 ## Limitations
 - A non-generic derived class has to be created for each `<TKey, TValue>` combination you want to use. A `CustomPropertyDrawer` has to be declared for each of these classes.
 - Types drawn with a folding arrow (such as `Quaternion` or any serializable class) used as keys or values will have an empty label next to the arrow.
 
-    ![Complex type screenshot](http://azixmcaze.github.io/files/SerializableDictionary_screenshot4.png)
+    ![Complex type screenshot](https://azixmcaze.github.io/Unity-SerializableDictionary/SerializableDictionary_screenshot4.png)
 - Multiple editing of scripts using `SerializableDictionaries` in the inspector is not supported. The inspector will show the dictionaries but data loss is likely to occur.
 - The conflicting key detection does not work when using `LayerMask` as key. The `LayerMask` value is changed after the `CustomPropertyDrawer` execution.
 

@@ -26,7 +26,7 @@ This project provides a generic dictionary class and its custom property drawer 
 - Types drawn with a folding arrow (such as `Quaternion` or any serializable class) used as keys or values will have an empty label next to the arrow.
 
     ![Complex type screenshot](http://azixmcaze.github.io/files/SerializableDictionary_screenshot4.png)
-- Multiple editing of scripts using `SerializableDictionaries` in the inspector is not supported. The inspector will show the dictionnaries but data loss is likely to occur.
+- Multiple editing of scripts using `SerializableDictionaries` in the inspector is not supported. The inspector will show the dictionaries but data loss is likely to occur.
 - The conflicting key detection does not work when using `LayerMask` as key. The `LayerMask` value is changed after the `CustomPropertyDrawer` execution.
 
 ## Usage
@@ -58,7 +58,7 @@ Declare the custom property drawer for these new types by adding the `CustomProp
 public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
 ```
 
-It is recommended to create one derivate class in a separate file and add the attributes to this class instead of modifying the original `SerializableDictionaryPropertyDrawer` class.
+It is recommended to create one derived class in a separate file and add the attributes to this class instead of modifying the original `SerializableDictionaryPropertyDrawer` class.
 You can use the same class for all your `SerializableDictionary` specializations, there is no need to create a new one for each specialization.
 
 Add the dictionaries to your scripts and access them directly of through a property.

@@ -37,7 +37,6 @@ Copy these files in your project:
         - `SerializableDictionary.cs`
         - `UserSerializableDictionaryPropertyDrawer.cs` (optional)
     - `Editor/`
-        - `DebugUtilsEditor.cs`
         - `SerializableDictionaryPropertyDrawer.cs`
         - `UserSerializableDictionaries.cs` (optional)
 

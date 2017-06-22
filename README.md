@@ -44,15 +44,18 @@ It is recommended to create one derivate class in a separate file and add the at
 You can use the same class for all your `SerializableDictionary` specializations, there is no need to create a new one for each specialization.
 
 Add the dictionaries to your scripts and access them directly of through a property.
+The dictionaries can be accessed through a property of type `IDictionary<TKey, TValue>` for better encapsulation.
 
 ```csharp
-public StringStringDictionary m_testDictionary1;
+public StringStringDictionary m_myDictionary1;
 
 [SerializeField]
-MyScriptColorDictionary m_testDictionary2;
-public IDictionary<MyScript, Color> TestDictionary2
+MyScriptColorDictionary m_myDictionary2;
+public IDictionary<MyScript, Color> MyDictionary2
 {
-    get { return m_testDictionary2; }
-    set { m_testDictionary2.CopyFrom (value); }
+    get { return m_myDictionary2; }
+    set { m_myDictionary2.CopyFrom (value); }
 }
 ```
+
+The `CopyFrom(value)` method clears the `m_myDictionary2` dictionary and adds to it each of content of the `value` dictionary,  effectively copying `value` into `m_myDictionary2`.

@@ -94,3 +94,13 @@ public StringMyClassDictionary m_myDictionary3;
 ```
 
 The `CopyFrom(value)` method clears the `m_myDictionary2` dictionary and adds to it each of content of the `value` dictionary,  effectively copying `value` into `m_myDictionary2`.
+
+`SerializableDictionary` has a copy constructor from `IDictionary<TKey, TValue>`. As constructors from parent classes cannot be used directly, you have to add a copy constructor to your derived classes calling the base constructor in order to use it.
+
+```csharp
+[Serializable]
+public class StringColorDictionary : SerializableDictionary<string, Color>
+{
+    public StringColorDictionary(IDictionary<string, Color> dict) : base(dict) {}
+}
+```

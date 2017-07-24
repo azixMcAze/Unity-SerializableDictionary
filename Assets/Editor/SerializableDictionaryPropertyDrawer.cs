@@ -420,7 +420,7 @@ public abstract class SerializableDictionaryPropertyDrawerBase : PropertyDrawer
 	}
 }
 
-public abstract class SingleLineSerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawerBase
+public class SingleLineSerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawerBase
 {
 	protected override float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
 	{
@@ -451,7 +451,7 @@ public abstract class SingleLineSerializableDictionaryPropertyDrawer : Serializa
 	}
 }
 
-public abstract class DoubleLineSerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawerBase
+public class DoubleLineSerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawerBase
 {
 	protected override float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
 	{

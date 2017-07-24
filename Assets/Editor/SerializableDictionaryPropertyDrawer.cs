@@ -460,17 +460,13 @@ public abstract class DoubleLineSerializableDictionaryPropertyDrawer : Serializa
 		float keyPropertyHeight = GetKeyPropertyHeight(keyProperty);
 		var keyPosition = linePosition;
 		keyPosition.height = keyPropertyHeight;
-		EditorGUIUtility.labelWidth = labelWidth * keyPosition.width / linePosition.width;
 		DrawKeyProperty(keyProperty, keyPosition, new GUIContent("Key " + index.ToString()));
 
 		float valuePropertyHeight = GetValuePropertyHeight(valueProperty);
 		var valuePosition = linePosition;
 		valuePosition.height = valuePropertyHeight;
 		valuePosition.y += keyPropertyHeight;
-		EditorGUIUtility.labelWidth = labelWidth * valuePosition.width / linePosition.width;
 		DrawValueProperty(valueProperty, valuePosition, new GUIContent("Value " + index.ToString()));
-
-		EditorGUIUtility.labelWidth = labelWidth;
 
 		return GetKeyValueLinePropertyHeight(keyPropertyHeight, valuePropertyHeight);
 	}

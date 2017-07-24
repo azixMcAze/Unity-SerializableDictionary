@@ -5,7 +5,7 @@ using UnityEditor;
 using System.Reflection;
 using System;
 
-public abstract class SerializableDictionaryPropertyDrawerBase : PropertyDrawer
+public abstract class SerializableDictionaryPropertyDrawer : PropertyDrawer
 {
 	const string KeysFieldName = "m_keys";
 	const string ValuesFieldName = "m_values";
@@ -251,7 +251,7 @@ public abstract class SerializableDictionaryPropertyDrawerBase : PropertyDrawer
 
 	static Dictionary<SerializedPropertyType, PropertyInfo> ms_serializedPropertyValueAccessorsDict;
 
-	static SerializableDictionaryPropertyDrawerBase()
+	static SerializableDictionaryPropertyDrawer()
 	{
 		Dictionary<SerializedPropertyType, string> serializedPropertyValueAccessorsNameDict = new Dictionary<SerializedPropertyType, string>() {
 			{ SerializedPropertyType.Integer, "intValue" },
@@ -420,7 +420,7 @@ public abstract class SerializableDictionaryPropertyDrawerBase : PropertyDrawer
 	}
 }
 
-public class SingleLineSerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawerBase
+public class SingleLineSerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer
 {
 	protected override float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
 	{
@@ -451,7 +451,7 @@ public class SingleLineSerializableDictionaryPropertyDrawer : SerializableDictio
 	}
 }
 
-public class DoubleLineSerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawerBase
+public class DoubleLineSerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer
 {
 	protected override float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
 	{

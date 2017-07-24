@@ -88,7 +88,7 @@ public abstract class SerializableDictionaryPropertyDrawerBase : PropertyDrawer
 				var valueProperty = entry.valueProperty;
 				int i = entry.index;
 
-				float lineHeight = DrawKeyValueLine(keyProperty, valueProperty, linePosition);
+				float lineHeight = DrawKeyValueLine(keyProperty, valueProperty, linePosition, i);
 
 				buttonPosition = linePosition;
 				buttonPosition.x = linePosition.xMax;
@@ -183,7 +183,7 @@ public abstract class SerializableDictionaryPropertyDrawerBase : PropertyDrawer
 		EditorGUI.EndProperty();
 	}
 
-	protected abstract float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition);
+	protected abstract float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index);
 
 	protected abstract float GetKeyValueLinePropertyHeight(float keyPropertyHeight, float valuePropertyHeight);
 
@@ -422,7 +422,7 @@ public abstract class SerializableDictionaryPropertyDrawerBase : PropertyDrawer
 
 public abstract class SingleLineSerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawerBase
 {
-	protected override float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition)
+	protected override float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
 	{
 		float labelWidth = EditorGUIUtility.labelWidth;
 		
@@ -448,5 +448,35 @@ public abstract class SingleLineSerializableDictionaryPropertyDrawer : Serializa
 	protected override float GetKeyValueLinePropertyHeight(float keyPropertyHeight, float valuePropertyHeight)
 	{
 		return Mathf.Max(keyPropertyHeight, valuePropertyHeight);
+	}
+}
+
+public abstract class DoubleLineSerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawerBase
+{
+	protected override float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
+	{
+		float labelWidth = EditorGUIUtility.labelWidth;
+		
+		float keyPropertyHeight = GetKeyPropertyHeight(keyProperty);
+		var keyPosition = linePosition;
+		keyPosition.height = keyPropertyHeight;
+		EditorGUIUtility.labelWidth = labelWidth * keyPosition.width / linePosition.width;
+		DrawKeyProperty(keyProperty, keyPosition, new GUIContent("Key " + index.ToString()));
+
+		float valuePropertyHeight = GetValuePropertyHeight(valueProperty);
+		var valuePosition = linePosition;
+		valuePosition.height = valuePropertyHeight;
+		valuePosition.y += keyPropertyHeight;
+		EditorGUIUtility.labelWidth = labelWidth * valuePosition.width / linePosition.width;
+		DrawValueProperty(valueProperty, valuePosition, new GUIContent("Value " + index.ToString()));
+
+		EditorGUIUtility.labelWidth = labelWidth;
+
+		return GetKeyValueLinePropertyHeight(keyPropertyHeight, valuePropertyHeight);
+	}
+
+	protected override float GetKeyValueLinePropertyHeight(float keyPropertyHeight, float valuePropertyHeight)
+	{
+		return keyPropertyHeight + valuePropertyHeight;
 	}
 }

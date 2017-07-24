@@ -14,6 +14,8 @@ public class DictionaryTest : MonoBehaviour {
 
 	public ObjectColorDictionary m_testDictionary2;
 
+	public QuaternionMyClassDictionary m_testDictionary3;
+
 	void Reset ()
 	{
 		TestDictionary = new Dictionary<string, string>() { {"first key", "value A"}, {"second key", "value B"}, {"third key", "value C"} };

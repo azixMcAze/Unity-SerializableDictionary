@@ -20,12 +20,10 @@ This project provides a generic dictionary class and its custom property drawer 
     ![Conflicting keys screenshot](https://azixmcaze.github.io/Unity-SerializableDictionary/SerializableDictionary_screenshot2.png)
 
     ![Null key screenshot](https://azixmcaze.github.io/Unity-SerializableDictionary/SerializableDictionary_screenshot3.png)
+- You can customize the layout of the dictionnary inspector by subclassing the custom property drawer. A single line layout and a two line layout are provided by default.
 
 ## Limitations
 - A non-generic derived class has to be created for each `<TKey, TValue>` combination you want to use. A `CustomPropertyDrawer` has to be declared for each of these classes.
-- Types drawn with a folding arrow (such as `Quaternion` or any serializable class) used as keys or values will have an empty label next to the arrow.
-
-    ![Complex type screenshot](https://azixmcaze.github.io/Unity-SerializableDictionary/SerializableDictionary_screenshot4.png)
 - Multiple editing of scripts using `SerializableDictionaries` in the inspector is not supported. The inspector will show the dictionaries but data loss is likely to occur.
 - The conflicting key detection does not work when using `LayerMask` as key. The `LayerMask` value is changed after the `CustomPropertyDrawer` execution.
 
@@ -49,12 +47,30 @@ public class StringStringDictionary : SerializableDictionary<string, string> {}
 public class MyScriptColorDictionary : SerializableDictionary<MyScript, Color> {}
 ```
 
-Declare the custom property drawer for these new types by adding the `CustomPropertyDrawer` attribute to the `SerializableDictionaryPropertyDrawer` class or of one of its derived class.
+You can use your own serializable classes.
+```csharp
+[Serializable]
+public class MyClass
+{
+    public int i;
+    public string str;
+}
+
+[Serializable]
+public class StringMyClassDictionary : SerializableDictionary<string, MyClass> {}
+```
+
+
+
+Declare the custom property drawer for these new types by adding the `CustomPropertyDrawer` attribute to one of the `SerializableDictionaryPropertyDrawer` derived classes. Use `SingleLineSerializableDictionaryPropertyDrawer` for a single-line layout and `DoubleLineSerializableDictionaryPropertyDrawer` for a double line layout. The single line layout is recommended for simple types and the double line layouts for types that are displayed with a foldout in the inspector, such as custom classes or `Quaternions`.
 
 ```csharp
 [CustomPropertyDrawer(typeof(StringStringDictionary))]
 [CustomPropertyDrawer(typeof(MyScriptColorDictionary))]
-public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
+public class AnySingleLineSerializableDictionaryPropertyDrawer : SingleLineSerializableDictionaryPropertyDrawer {}
+
+[CustomPropertyDrawer(typeof(StringMyClassDictionary))]
+public class AnyDoubleLineSerializableDictionaryPropertyDrawer : DoubeLineSerializableDictionaryPropertyDrawer {}
 ```
 
 It is recommended to create one derived class in a separate file and add the attributes to this class instead of modifying the original `SerializableDictionaryPropertyDrawer` class.
@@ -73,6 +89,8 @@ public IDictionary<MyScript, Color> MyDictionary2
     get { return m_myDictionary2; }
     set { m_myDictionary2.CopyFrom (value); }
 }
+
+public StringMyClassDictionary m_myDictionary3;
 ```
 
 The `CopyFrom(value)` method clears the `m_myDictionary2` dictionary and adds to it each of content of the `value` dictionary,  effectively copying `value` into `m_myDictionary2`.

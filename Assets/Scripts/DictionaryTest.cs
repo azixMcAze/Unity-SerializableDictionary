@@ -17,6 +17,6 @@ public class DictionaryTest : MonoBehaviour {
 	void Reset ()
 	{
 		TestDictionary = new Dictionary<string, string>() { {"first key", "value A"}, {"second key", "value B"}, {"third key", "value C"} };
-		m_testDictionary2 = new ObjectColorDictionary() { {gameObject, Color.blue}, {this, Color.red} };
+		m_testDictionary2 = new ObjectColorDictionary() { { gameObject, Color.blue }, { this, Color.red } };
 	}
 }

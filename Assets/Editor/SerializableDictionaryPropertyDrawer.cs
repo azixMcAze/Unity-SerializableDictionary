@@ -187,9 +187,9 @@ public abstract class SerializableDictionaryPropertyDrawerBase : PropertyDrawer
 
 	protected abstract float GetKeyValueLinePropertyHeight(float keyPropertyHeight, float valuePropertyHeight);
 
-	protected virtual void DrawKeyProperty(SerializedProperty keyProperty, Rect keyPosition)
+	protected virtual void DrawKeyProperty(SerializedProperty keyProperty, Rect keyPosition, GUIContent label)
 	{
-		EditorGUI.PropertyField(keyPosition, keyProperty, GUIContent.none, true);
+		EditorGUI.PropertyField(keyPosition, keyProperty, label, true);
 	}
 
 	protected virtual float GetKeyPropertyHeight(SerializedProperty keyProperty)
@@ -197,9 +197,9 @@ public abstract class SerializableDictionaryPropertyDrawerBase : PropertyDrawer
 		return EditorGUI.GetPropertyHeight(keyProperty);
 	}
 
-	protected virtual void DrawValueProperty(SerializedProperty valueProperty, Rect valuePosition)
+	protected virtual void DrawValueProperty(SerializedProperty valueProperty, Rect valuePosition, GUIContent label)
 	{
-		EditorGUI.PropertyField(valuePosition, valueProperty, GUIContent.none, true);
+		EditorGUI.PropertyField(valuePosition, valueProperty, label, true);
 	}
 
 	protected virtual float GetValuePropertyHeight(SerializedProperty valueProperty)
@@ -431,14 +431,14 @@ public abstract class SingleLineSerializableDictionaryPropertyDrawer : Serializa
 		keyPosition.height = keyPropertyHeight;
 		keyPosition.xMax = labelWidth;
 		EditorGUIUtility.labelWidth = labelWidth * keyPosition.width / linePosition.width;
-		DrawKeyProperty(keyProperty, keyPosition);
+		DrawKeyProperty(keyProperty, keyPosition, GUIContent.none);
 
 		float valuePropertyHeight = GetValuePropertyHeight(valueProperty);
 		var valuePosition = linePosition;
 		valuePosition.height = valuePropertyHeight;
 		valuePosition.xMin = labelWidth;
 		EditorGUIUtility.labelWidth = labelWidth * valuePosition.width / linePosition.width;
-		DrawValueProperty(valueProperty, valuePosition);
+		DrawValueProperty(valueProperty, valuePosition, GUIContent.none);
 	
 		EditorGUIUtility.labelWidth = labelWidth;
 

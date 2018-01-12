@@ -425,19 +425,20 @@ public class SingleLineSerializableDictionaryPropertyDrawer : SerializableDictio
 	protected override float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
 	{
 		float labelWidth = EditorGUIUtility.labelWidth;
+		float labelWidthRelative = labelWidth / linePosition.width;
 		
 		float keyPropertyHeight = GetKeyPropertyHeight(keyProperty);
 		var keyPosition = linePosition;
 		keyPosition.height = keyPropertyHeight;
-		keyPosition.xMax = labelWidth;
-		EditorGUIUtility.labelWidth = labelWidth * keyPosition.width / linePosition.width;
+		keyPosition.width = labelWidth;
+		EditorGUIUtility.labelWidth = keyPosition.width * labelWidthRelative;
 		DrawKeyProperty(keyProperty, keyPosition, GUIContent.none);
 
 		float valuePropertyHeight = GetValuePropertyHeight(valueProperty);
 		var valuePosition = linePosition;
 		valuePosition.height = valuePropertyHeight;
-		valuePosition.xMin = labelWidth;
-		EditorGUIUtility.labelWidth = labelWidth * valuePosition.width / linePosition.width;
+		valuePosition.xMin += labelWidth;
+		EditorGUIUtility.labelWidth = valuePosition.width * labelWidthRelative;
 		DrawValueProperty(valueProperty, valuePosition, GUIContent.none);
 	
 		EditorGUIUtility.labelWidth = labelWidth;

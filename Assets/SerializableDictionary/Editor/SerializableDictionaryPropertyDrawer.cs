@@ -37,8 +37,8 @@ public abstract class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			this.propertyPath = property.propertyPath;
 		}
 
-		UnityEngine.Object instance;
-		string propertyPath;
+		public UnityEngine.Object instance;
+		public string propertyPath;
 	}
 
 	static Dictionary<PropertyIdentity, ConflictState> s_conflictStateDict = new Dictionary<PropertyIdentity, ConflictState>();

@@ -49,6 +49,20 @@ public class StringStringDictionary : SerializableDictionary<string, string> {}
 public class MyScriptColorDictionary : SerializableDictionary<MyScript, Color> {}
 ```
 
+You can use your own serializable classes.
+```csharp
+[Serializable]
+public class MyClass
+{
+    public int i;
+    public string str;
+}
+
+[Serializable]
+public class StringMyClassDictionary : SerializableDictionary<string, MyClass> {}
+```
+
+
 Declare the custom property drawer for these new types by adding the `CustomPropertyDrawer` attribute to the `SerializableDictionaryPropertyDrawer` class or of one of its derived class.
 
 ```csharp
@@ -73,6 +87,18 @@ public IDictionary<MyScript, Color> MyDictionary2
     get { return m_myDictionary2; }
     set { m_myDictionary2.CopyFrom (value); }
 }
+
+public StringMyClassDictionary m_myDictionary3;
 ```
 
 The `CopyFrom(value)` method clears the `m_myDictionary2` dictionary and adds to it each of content of the `value` dictionary,  effectively copying `value` into `m_myDictionary2`.
+
+`SerializableDictionary` has a copy constructor from `IDictionary<TKey, TValue>`. As constructors from parent classes cannot be used directly, you have to add a copy constructor to your derived classes calling the base constructor in order to use it.
+
+```csharp
+[Serializable]
+public class StringColorDictionary : SerializableDictionary<string, Color>
+{
+    public StringColorDictionary(IDictionary<string, Color> dict) : base(dict) {}
+}
+```

@@ -9,7 +9,6 @@ public abstract class SerializableDictionaryPropertyDrawer : PropertyDrawer
 {
 	const string KeysFieldName = "m_keys";
 	const string ValuesFieldName = "m_values";
-	protected const float IndentWidth = 15f;
 
 	static GUIContent m_iconPlus = IconContent ("Toolbar Plus", "Add entry");
 	static GUIContent m_iconMinus = IconContent ("Toolbar Minus", "Remove entry");
@@ -78,10 +77,10 @@ public abstract class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			}
 			EditorGUI.EndDisabledGroup();
 
+			EditorGUI.indentLevel++;
 			var linePosition = position;
 			linePosition.y += EditorGUIUtility.singleLineHeight;
-			linePosition.x += IndentWidth;
-			linePosition.xMax -= buttonWidth + IndentWidth;
+			linePosition.xMax -= buttonWidth;
 
 			foreach(var entry in EnumerateEntries(keyArrayProperty, valueArrayProperty))
 			{
@@ -122,6 +121,8 @@ public abstract class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				
 				linePosition.y += lineHeight;
 			}
+
+			EditorGUI.indentLevel--;
 		}
 
 		if(buttonAction == Action.Add)
@@ -429,14 +430,14 @@ public class SingleLineSerializableDictionaryPropertyDrawer : SerializableDictio
 		float keyPropertyHeight = GetKeyPropertyHeight(keyProperty);
 		var keyPosition = linePosition;
 		keyPosition.height = keyPropertyHeight;
-		keyPosition.width = labelWidth - 2f * IndentWidth;
+		keyPosition.width = labelWidth;
 		EditorGUIUtility.labelWidth = keyPosition.width * labelWidthRelative;
 		DrawKeyProperty(keyProperty, keyPosition, GUIContent.none);
 
 		float valuePropertyHeight = GetValuePropertyHeight(valueProperty);
 		var valuePosition = linePosition;
 		valuePosition.height = valuePropertyHeight;
-		valuePosition.xMin += labelWidth - IndentWidth;
+		valuePosition.xMin += labelWidth;
 		EditorGUIUtility.labelWidth = valuePosition.width * labelWidthRelative;
 		DrawValueProperty(valueProperty, valuePosition, GUIContent.none);
 	
@@ -456,8 +457,7 @@ public class DoubleLineSerializableDictionaryPropertyDrawer : SerializableDictio
 	protected override float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
 	{
 		float labelWidth = EditorGUIUtility.labelWidth;
-		EditorGUIUtility.labelWidth = labelWidth - IndentWidth;
-
+		
 		float keyPropertyHeight = GetKeyPropertyHeight(keyProperty);
 		var keyPosition = linePosition;
 		keyPosition.height = keyPropertyHeight;
@@ -468,8 +468,6 @@ public class DoubleLineSerializableDictionaryPropertyDrawer : SerializableDictio
 		valuePosition.height = valuePropertyHeight;
 		valuePosition.y += keyPropertyHeight;
 		DrawValueProperty(valueProperty, valuePosition, new GUIContent("Value " + index.ToString()));
-
-		EditorGUIUtility.labelWidth = labelWidth;
 
 		return GetKeyValueLinePropertyHeight(keyPropertyHeight, valuePropertyHeight);
 	}

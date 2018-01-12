@@ -31,15 +31,6 @@ This project provides a generic dictionary class and its custom property drawer 
 
 ## Usage
 
-Copy these files in your project:
-- `Assets/`
-    - `Scripts/`
-        - `SerializableDictionary.cs`
-        - `UserSerializableDictionaryPropertyDrawer.cs` (optional)
-    - `Editor/`
-        - `SerializableDictionaryPropertyDrawer.cs`
-        - `UserSerializableDictionaries.cs` (optional)
-
 As Unity is unable to directly serialize generic types, create a derived class for each `SerializedDictionary` specialization you want.
 ```csharp
 [Serializable]
@@ -72,7 +63,7 @@ public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPro
 ```
 
 It is recommended to create one derived class in a separate file and add the attributes to this class instead of modifying the original `SerializableDictionaryPropertyDrawer` class.
-You can use the same class for all your `SerializableDictionary` specializations, there is no need to create a new one for each specialization.
+You can use the same class for all your `SerializableDictionary` specializations, there is no need to create a new one for each specialization. See `UserSerializableDictionaryPropertyDrawers.cs` as an example. You can copy this file and add your own attributes to the class.
 
 Add the dictionaries to your scripts and access them directly of through a property.
 The dictionaries can be accessed through a property of type `IDictionary<TKey, TValue>` for better encapsulation.
@@ -93,7 +84,7 @@ public StringMyClassDictionary m_myDictionary3;
 
 The `CopyFrom(value)` method clears the `m_myDictionary2` dictionary and adds to it each of content of the `value` dictionary,  effectively copying `value` into `m_myDictionary2`.
 
-`SerializableDictionary` has a copy constructor from `IDictionary<TKey, TValue>`. As constructors from parent classes cannot be used directly, you have to add a copy constructor to your derived classes calling the base constructor in order to use it.
+`SerializableDictionary` has a copy constructor from `IDictionary<TKey, TValue>`. As constructors from parent classes cannot be used directly, you have to add a copy constructor to your derived classes calling the base constructor in order to use it. This is optional.
 
 ```csharp
 [Serializable]

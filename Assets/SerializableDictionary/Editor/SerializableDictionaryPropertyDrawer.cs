@@ -456,7 +456,8 @@ public class DoubleLineSerializableDictionaryPropertyDrawer : SerializableDictio
 	protected override float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
 	{
 		float labelWidth = EditorGUIUtility.labelWidth;
-		
+		EditorGUIUtility.labelWidth = labelWidth - IndentWidth;
+
 		float keyPropertyHeight = GetKeyPropertyHeight(keyProperty);
 		var keyPosition = linePosition;
 		keyPosition.height = keyPropertyHeight;
@@ -467,6 +468,8 @@ public class DoubleLineSerializableDictionaryPropertyDrawer : SerializableDictio
 		valuePosition.height = valuePropertyHeight;
 		valuePosition.y += keyPropertyHeight;
 		DrawValueProperty(valueProperty, valuePosition, new GUIContent("Value " + index.ToString()));
+
+		EditorGUIUtility.labelWidth = labelWidth;
 
 		return GetKeyValueLinePropertyHeight(keyPropertyHeight, valuePropertyHeight);
 	}

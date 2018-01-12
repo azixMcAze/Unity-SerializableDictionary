@@ -29,7 +29,19 @@ public abstract class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		public float m_conflictLineHeight = 0f;
 	}
 
-	Dictionary<string, ConflictState> m_conflictStateDict = new Dictionary<string, ConflictState>();
+	struct PropertyIdentity
+	{
+		public PropertyIdentity(SerializedProperty property)
+		{
+			this.instance = property.serializedObject.targetObject;
+			this.propertyPath = property.propertyPath;
+		}
+
+		UnityEngine.Object instance;
+		string propertyPath;
+	}
+
+	static Dictionary<PropertyIdentity, ConflictState> s_conflictStateDict = new Dictionary<PropertyIdentity, ConflictState>();
 	
 	enum Action
 	{
@@ -259,14 +271,14 @@ public abstract class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		return propertyHeight;
 	}
 
-	ConflictState GetConflictState(SerializedProperty property)
+	static ConflictState GetConflictState(SerializedProperty property)
 	{
-		string propertyPath = property.propertyPath;
 		ConflictState conflictState;
-		if(!m_conflictStateDict.TryGetValue(propertyPath, out conflictState))
+		PropertyIdentity propId = new PropertyIdentity(property);
+		if(!s_conflictStateDict.TryGetValue(propId, out conflictState))
 		{
 			conflictState = new ConflictState();
-			m_conflictStateDict.Add(propertyPath, conflictState);
+			s_conflictStateDict.Add(propId, conflictState);
 		}
 		return conflictState;
 	}

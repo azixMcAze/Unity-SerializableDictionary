@@ -9,6 +9,7 @@ public abstract class SerializableDictionaryPropertyDrawer : PropertyDrawer
 {
 	const string KeysFieldName = "m_keys";
 	const string ValuesFieldName = "m_values";
+	protected const float IndentWidth = 15f;
 
 	static GUIContent m_iconPlus = IconContent ("Toolbar Plus", "Add entry");
 	static GUIContent m_iconMinus = IconContent ("Toolbar Minus", "Remove entry");
@@ -430,7 +431,7 @@ public class SingleLineSerializableDictionaryPropertyDrawer : SerializableDictio
 		float keyPropertyHeight = GetKeyPropertyHeight(keyProperty);
 		var keyPosition = linePosition;
 		keyPosition.height = keyPropertyHeight;
-		keyPosition.width = labelWidth;
+		keyPosition.width = labelWidth - IndentWidth;
 		EditorGUIUtility.labelWidth = keyPosition.width * labelWidthRelative;
 		DrawKeyProperty(keyProperty, keyPosition, GUIContent.none);
 
@@ -439,7 +440,9 @@ public class SingleLineSerializableDictionaryPropertyDrawer : SerializableDictio
 		valuePosition.height = valuePropertyHeight;
 		valuePosition.xMin += labelWidth;
 		EditorGUIUtility.labelWidth = valuePosition.width * labelWidthRelative;
+		EditorGUI.indentLevel--;
 		DrawValueProperty(valueProperty, valuePosition, GUIContent.none);
+		EditorGUI.indentLevel++;
 	
 		EditorGUIUtility.labelWidth = labelWidth;
 

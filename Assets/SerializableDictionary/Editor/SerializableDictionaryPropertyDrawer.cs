@@ -503,8 +503,10 @@ public class DoubleLineSerializableDictionaryPropertyDrawer : SerializableDictio
 		var valuePosition = linePosition;
 		valuePosition.height = valuePropertyHeight;
 		valuePosition.y += keyPropertyHeight;
+		EditorGUI.indentLevel++;
 		DrawValueProperty(valueProperty, valuePosition, new GUIContent("Value " + index.ToString()));
-
+		EditorGUI.indentLevel--;
+		
 		return GetKeyValueLinePropertyHeight(keyPropertyHeight, valuePropertyHeight);
 	}
 

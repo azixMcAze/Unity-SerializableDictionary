@@ -5,7 +5,7 @@ using UnityEditor;
 using System.Reflection;
 using System;
 
-public abstract class SerializableDictionaryPropertyDrawer : PropertyDrawer
+public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 {
 	const string KeysFieldName = "m_keys";
 	const string ValuesFieldName = "m_values";
@@ -203,8 +203,75 @@ public abstract class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		EditorGUI.EndProperty();
 	}
 
-	protected abstract float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index);
-	protected abstract float GetKeyValueLinePropertyHeight(float keyPropertyHeight, float valuePropertyHeight);
+	static float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
+	{
+		bool keyCanBeExpanded = CanPropertyBeExpanded(keyProperty);
+		bool valueCanBeExpanded = CanPropertyBeExpanded(valueProperty);
+
+		if(!keyCanBeExpanded && valueCanBeExpanded)
+			return DrawKeyValueLineExpand(keyProperty, valueProperty, linePosition, index);
+		else
+			return DrawKeyValueLineSimple(keyProperty, valueProperty, linePosition, index);
+	}
+
+	static float DrawKeyValueLineSimple(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
+	{
+		float labelWidth = EditorGUIUtility.labelWidth;
+		float labelWidthRelative = labelWidth / linePosition.width;
+		
+		float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
+		var keyPosition = linePosition;
+		keyPosition.height = keyPropertyHeight;
+		keyPosition.width = labelWidth - IndentWidth;
+		EditorGUIUtility.labelWidth = keyPosition.width * labelWidthRelative;
+		EditorGUI.PropertyField(keyPosition, keyProperty, GUIContent.none, true);
+
+		float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
+		var valuePosition = linePosition;
+		valuePosition.height = valuePropertyHeight;
+		valuePosition.xMin += labelWidth;
+		EditorGUIUtility.labelWidth = valuePosition.width * labelWidthRelative;
+		EditorGUI.indentLevel--;
+		EditorGUI.PropertyField(valuePosition, valueProperty, GUIContent.none, true);
+		EditorGUI.indentLevel++;
+	
+		EditorGUIUtility.labelWidth = labelWidth;
+
+		return Mathf.Max(keyPropertyHeight, valuePropertyHeight);
+	}
+
+	static float DrawKeyValueLineExpand(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
+	{
+		float labelWidth = EditorGUIUtility.labelWidth;
+
+		float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
+		var keyPosition = linePosition;
+		keyPosition.height = keyPropertyHeight;
+		keyPosition.width = labelWidth - IndentWidth;
+		EditorGUI.PropertyField(keyPosition, keyProperty, GUIContent.none, true);
+
+		float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
+		var valuePosition = linePosition;
+		valuePosition.height = valuePropertyHeight;
+		EditorGUI.PropertyField(valuePosition, valueProperty, GUIContent.none, true);
+
+		EditorGUIUtility.labelWidth = labelWidth;
+
+		return Mathf.Max(keyPropertyHeight, valuePropertyHeight);
+	}
+
+	static bool CanPropertyBeExpanded(SerializedProperty property)
+	{
+		switch(property.propertyType)
+		{
+		case SerializedPropertyType.Generic:
+		case SerializedPropertyType.Vector4:
+		case SerializedPropertyType.Quaternion:
+			return true;
+		default:
+			return false;
+		}
+	}
 
 	void SaveProperty(SerializedProperty keyProperty, SerializedProperty valueProperty, int index, int otherIndex, ConflictState conflictState)
 	{
@@ -212,7 +279,7 @@ public abstract class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		conflictState.m_conflictValue = GetPropertyValue(valueProperty);
 		float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
 		float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
-		float lineHeight = GetKeyValueLinePropertyHeight(keyPropertyHeight, valuePropertyHeight);
+		float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
 		conflictState.m_conflictLineHeight = lineHeight;
 		conflictState.m_conflictIndex = index;
 		conflictState.m_conflictOtherIndex = otherIndex;
@@ -235,7 +302,7 @@ public abstract class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				var valueProperty = entry.valueProperty;
 				float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
 				float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
-				float lineHeight = GetKeyValueLinePropertyHeight(keyPropertyHeight, valuePropertyHeight);
+				float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
 				propertyHeight += lineHeight;
 			}
 
@@ -433,92 +500,3 @@ public abstract class SerializableDictionaryPropertyDrawer : PropertyDrawer
 	}
 }
 
-public class SingleLineSerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer
-{
-	protected override float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
-	{
-		float labelWidth = EditorGUIUtility.labelWidth;
-		float labelWidthRelative = labelWidth / linePosition.width;
-		
-		float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
-		var keyPosition = linePosition;
-		keyPosition.height = keyPropertyHeight;
-		keyPosition.width = labelWidth - IndentWidth;
-		EditorGUIUtility.labelWidth = keyPosition.width * labelWidthRelative;
-		EditorGUI.PropertyField(keyPosition, keyProperty, GUIContent.none, true);
-
-		float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
-		var valuePosition = linePosition;
-		valuePosition.height = valuePropertyHeight;
-		valuePosition.xMin += labelWidth;
-		EditorGUIUtility.labelWidth = valuePosition.width * labelWidthRelative;
-		EditorGUI.indentLevel--;
-		EditorGUI.PropertyField(valuePosition, valueProperty, GUIContent.none, true);
-		EditorGUI.indentLevel++;
-	
-		EditorGUIUtility.labelWidth = labelWidth;
-
-		return GetKeyValueLinePropertyHeight(keyPropertyHeight, valuePropertyHeight);
-	}
-
-	protected override float GetKeyValueLinePropertyHeight(float keyPropertyHeight, float valuePropertyHeight)
-	{
-		return Mathf.Max(keyPropertyHeight, valuePropertyHeight);
-	}
-}
-
-public class DoubleLineSerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer
-{
-	protected override float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
-	{
-		float labelWidth = EditorGUIUtility.labelWidth;
-		
-		float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
-		var keyPosition = linePosition;
-		keyPosition.height = keyPropertyHeight;
-		EditorGUI.PropertyField(keyPosition, keyProperty, new GUIContent("Key " + index.ToString()), true);
-
-		float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
-		var valuePosition = linePosition;
-		valuePosition.height = valuePropertyHeight;
-		valuePosition.y += keyPropertyHeight;
-		EditorGUI.indentLevel++;
-		EditorGUI.PropertyField(valuePosition, valueProperty, new GUIContent("Value " + index.ToString()), true);
-		EditorGUI.indentLevel--;
-
-		return GetKeyValueLinePropertyHeight(keyPropertyHeight, valuePropertyHeight);
-	}
-
-	protected override float GetKeyValueLinePropertyHeight(float keyPropertyHeight, float valuePropertyHeight)
-	{
-		return keyPropertyHeight + valuePropertyHeight;
-	}
-}
-
-public class MixedSerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer
-{
-	protected override float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
-	{
-		float labelWidth = EditorGUIUtility.labelWidth;
-
-		float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
-		var keyPosition = linePosition;
-		keyPosition.height = keyPropertyHeight;
-		keyPosition.width = labelWidth - IndentWidth;
-		EditorGUI.PropertyField(keyPosition, keyProperty, GUIContent.none, true);
-
-		float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
-		var valuePosition = linePosition;
-		valuePosition.height = valuePropertyHeight;
-		EditorGUI.PropertyField(valuePosition, valueProperty, GUIContent.none, true);
-
-		EditorGUIUtility.labelWidth = labelWidth;
-
-		return GetKeyValueLinePropertyHeight(keyPropertyHeight, valuePropertyHeight);
-	}
-
-	protected override float GetKeyValueLinePropertyHeight(float keyPropertyHeight, float valuePropertyHeight)
-	{
-		return Mathf.Max(keyPropertyHeight, valuePropertyHeight);
-	}
-}

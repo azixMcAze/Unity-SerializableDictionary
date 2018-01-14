@@ -5,7 +5,5 @@ using UnityEditor;
 
 [CustomPropertyDrawer(typeof(StringStringDictionary))]
 [CustomPropertyDrawer(typeof(ObjectColorDictionary))]
-public class AnySingleLineSerializableDictionaryPropertyDrawer : SingleLineSerializableDictionaryPropertyDrawer {}
+public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
 
-[CustomPropertyDrawer(typeof(QuaternionMyClassDictionary))]
-public class AnyDoubleLineSerializableDictionaryPropertyDrawer : DoubleLineSerializableDictionaryPropertyDrawer {}

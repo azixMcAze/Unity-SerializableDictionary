@@ -337,7 +337,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		return conflictState;
 	}
 
-	static Dictionary<SerializedPropertyType, PropertyInfo> ms_serializedPropertyValueAccessorsDict;
+	static Dictionary<SerializedPropertyType, PropertyInfo> s_serializedPropertyValueAccessorsDict;
 
 	static SerializableDictionaryPropertyDrawer()
 	{
@@ -362,13 +362,13 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		};
 		Type serializedPropertyType = typeof(SerializedProperty);
 
-		ms_serializedPropertyValueAccessorsDict	= new Dictionary<SerializedPropertyType, PropertyInfo>();
+		s_serializedPropertyValueAccessorsDict	= new Dictionary<SerializedPropertyType, PropertyInfo>();
 		BindingFlags flags = BindingFlags.Instance | BindingFlags.Public;
 
 		foreach(var kvp in serializedPropertyValueAccessorsNameDict)
 		{
 			PropertyInfo propertyInfo = serializedPropertyType.GetProperty(kvp.Value, flags);
-			ms_serializedPropertyValueAccessorsDict.Add(kvp.Key, propertyInfo);
+			s_serializedPropertyValueAccessorsDict.Add(kvp.Key, propertyInfo);
 		}
 	}
 
@@ -399,7 +399,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 	public static object GetPropertyValue(SerializedProperty p)
 	{
 		PropertyInfo propertyInfo;
-		if(ms_serializedPropertyValueAccessorsDict.TryGetValue(p.propertyType, out propertyInfo))
+		if(s_serializedPropertyValueAccessorsDict.TryGetValue(p.propertyType, out propertyInfo))
 		{
 			return propertyInfo.GetValue(p, null);
 		}
@@ -415,7 +415,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 	static void SetPropertyValue(SerializedProperty p, object v)
 	{
 		PropertyInfo propertyInfo;
-		if(ms_serializedPropertyValueAccessorsDict.TryGetValue(p.propertyType, out propertyInfo))
+		if(s_serializedPropertyValueAccessorsDict.TryGetValue(p.propertyType, out propertyInfo))
 		{
 			propertyInfo.SetValue(p, v, null);
 		}

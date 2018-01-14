@@ -11,24 +11,24 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 	const string ValuesFieldName = "m_values";
 	protected const float IndentWidth = 15f;
 
-	static GUIContent m_iconPlus = IconContent ("Toolbar Plus", "Add entry");
-	static GUIContent m_iconMinus = IconContent ("Toolbar Minus", "Remove entry");
-	static GUIContent m_warningIconConflict = IconContent ("console.warnicon.sml", "Conflicting key, this entry will be lost");
-	static GUIContent m_warningIconOther = IconContent ("console.infoicon.sml", "Conflicting key");
-	static GUIContent m_warningIconNull = IconContent ("console.warnicon.sml", "Null key, this entry will be lost");
-	static GUIStyle m_buttonStyle = GUIStyle.none;
+	static GUIContent s_iconPlus = IconContent ("Toolbar Plus", "Add entry");
+	static GUIContent s_iconMinus = IconContent ("Toolbar Minus", "Remove entry");
+	static GUIContent s_warningIconConflict = IconContent ("console.warnicon.sml", "Conflicting key, this entry will be lost");
+	static GUIContent s_warningIconOther = IconContent ("console.infoicon.sml", "Conflicting key");
+	static GUIContent s_warningIconNull = IconContent ("console.warnicon.sml", "Null key, this entry will be lost");
+	static GUIStyle s_buttonStyle = GUIStyle.none;
 	static GUIContent s_tempContent = new GUIContent();
 
 
 	class ConflictState
 	{
-		public object m_conflictKey = null;
-		public object m_conflictValue = null;
-		public int m_conflictIndex = -1 ;
-		public int m_conflictOtherIndex = -1 ;
-		public bool m_conflictKeyPropertyExpanded = false;
-		public bool m_conflictValuePropertyExpanded = false;
-		public float m_conflictLineHeight = 0f;
+		public object conflictKey = null;
+		public object conflictValue = null;
+		public int conflictIndex = -1 ;
+		public int conflictOtherIndex = -1 ;
+		public bool conflictKeyPropertyExpanded = false;
+		public bool conflictValuePropertyExpanded = false;
+		public float conflictLineHeight = 0f;
 	}
 
 	struct PropertyIdentity
@@ -64,25 +64,25 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 
 		ConflictState conflictState = GetConflictState(property);
 
-		if(conflictState.m_conflictIndex != -1)
+		if(conflictState.conflictIndex != -1)
 		{
-			keyArrayProperty.InsertArrayElementAtIndex(conflictState.m_conflictIndex);
-			var keyProperty = keyArrayProperty.GetArrayElementAtIndex(conflictState.m_conflictIndex);
-			SetPropertyValue(keyProperty, conflictState.m_conflictKey);
-			keyProperty.isExpanded = conflictState.m_conflictKeyPropertyExpanded;
+			keyArrayProperty.InsertArrayElementAtIndex(conflictState.conflictIndex);
+			var keyProperty = keyArrayProperty.GetArrayElementAtIndex(conflictState.conflictIndex);
+			SetPropertyValue(keyProperty, conflictState.conflictKey);
+			keyProperty.isExpanded = conflictState.conflictKeyPropertyExpanded;
 
-			valueArrayProperty.InsertArrayElementAtIndex(conflictState.m_conflictIndex);
-			var valueProperty = valueArrayProperty.GetArrayElementAtIndex(conflictState.m_conflictIndex);
-			SetPropertyValue(valueProperty, conflictState.m_conflictValue);
-			valueProperty.isExpanded = conflictState.m_conflictValuePropertyExpanded;
+			valueArrayProperty.InsertArrayElementAtIndex(conflictState.conflictIndex);
+			var valueProperty = valueArrayProperty.GetArrayElementAtIndex(conflictState.conflictIndex);
+			SetPropertyValue(valueProperty, conflictState.conflictValue);
+			valueProperty.isExpanded = conflictState.conflictValuePropertyExpanded;
 		}
 
-		var buttonWidth = m_buttonStyle.CalcSize(m_iconPlus).x;
+		var buttonWidth = s_buttonStyle.CalcSize(s_iconPlus).x;
 
 		var labelPosition = position;
 		labelPosition.height = EditorGUIUtility.singleLineHeight;
 		if (property.isExpanded) 
-			labelPosition.xMax -= m_buttonStyle.CalcSize(m_iconPlus).x;
+			labelPosition.xMax -= s_buttonStyle.CalcSize(s_iconPlus).x;
 
 		EditorGUI.PropertyField(labelPosition, property, label, false);
 		// property.isExpanded = EditorGUI.Foldout(labelPosition, property.isExpanded, label);
@@ -91,8 +91,8 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			var buttonPosition = position;
 			buttonPosition.xMin = buttonPosition.xMax - buttonWidth;
 			buttonPosition.height = EditorGUIUtility.singleLineHeight;
-			EditorGUI.BeginDisabledGroup(conflictState.m_conflictIndex != -1);
-			if(GUI.Button(buttonPosition, m_iconPlus, m_buttonStyle))
+			EditorGUI.BeginDisabledGroup(conflictState.conflictIndex != -1);
+			if(GUI.Button(buttonPosition, s_iconPlus, s_buttonStyle))
 			{			
 				buttonAction = Action.Add;
 				buttonActionIndex = keyArrayProperty.arraySize;
@@ -115,29 +115,29 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				buttonPosition = linePosition;
 				buttonPosition.x = linePosition.xMax;
 				buttonPosition.height = EditorGUIUtility.singleLineHeight;
-				if(GUI.Button(buttonPosition, m_iconMinus, m_buttonStyle))
+				if(GUI.Button(buttonPosition, s_iconMinus, s_buttonStyle))
 				{
 					buttonAction = Action.Remove;
 					buttonActionIndex = i;
 				}
 
-				if(i == conflictState.m_conflictIndex && conflictState.m_conflictOtherIndex == -1)
+				if(i == conflictState.conflictIndex && conflictState.conflictOtherIndex == -1)
 				{
 					var iconPosition = linePosition;
-					iconPosition.size =  m_buttonStyle.CalcSize(m_warningIconNull);
-					GUI.Label(iconPosition, m_warningIconNull);
+					iconPosition.size =  s_buttonStyle.CalcSize(s_warningIconNull);
+					GUI.Label(iconPosition, s_warningIconNull);
 				}
-				else if(i == conflictState.m_conflictIndex)
+				else if(i == conflictState.conflictIndex)
 				{
 					var iconPosition = linePosition;
-					iconPosition.size =  m_buttonStyle.CalcSize(m_warningIconConflict);
-					GUI.Label(iconPosition, m_warningIconConflict);
+					iconPosition.size =  s_buttonStyle.CalcSize(s_warningIconConflict);
+					GUI.Label(iconPosition, s_warningIconConflict);
 				}
-				else if(i == conflictState.m_conflictOtherIndex)
+				else if(i == conflictState.conflictOtherIndex)
 				{
 					var iconPosition = linePosition;
-					iconPosition.size =  m_buttonStyle.CalcSize(m_warningIconOther);
-					GUI.Label(iconPosition, m_warningIconOther);
+					iconPosition.size =  s_buttonStyle.CalcSize(s_warningIconOther);
+					GUI.Label(iconPosition, s_warningIconOther);
 				}
 
 				
@@ -158,13 +158,13 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			DeleteArrayElementAtIndex(valueArrayProperty, buttonActionIndex);
 		}
 
-		conflictState.m_conflictKey = null;
-		conflictState.m_conflictValue = null;
-		conflictState.m_conflictIndex = -1;
-		conflictState.m_conflictOtherIndex = -1;
-		conflictState.m_conflictLineHeight = 0f;
-		conflictState.m_conflictKeyPropertyExpanded = false;
-		conflictState.m_conflictValuePropertyExpanded = false;
+		conflictState.conflictKey = null;
+		conflictState.conflictValue = null;
+		conflictState.conflictIndex = -1;
+		conflictState.conflictOtherIndex = -1;
+		conflictState.conflictLineHeight = 0f;
+		conflictState.conflictKeyPropertyExpanded = false;
+		conflictState.conflictValuePropertyExpanded = false;
 
 		foreach(var entry1 in EnumerateEntries(keyArrayProperty, valueArrayProperty))
 		{
@@ -283,16 +283,16 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 
 	static void SaveProperty(SerializedProperty keyProperty, SerializedProperty valueProperty, int index, int otherIndex, ConflictState conflictState)
 	{
-		conflictState.m_conflictKey = GetPropertyValue(keyProperty);
-		conflictState.m_conflictValue = GetPropertyValue(valueProperty);
+		conflictState.conflictKey = GetPropertyValue(keyProperty);
+		conflictState.conflictValue = GetPropertyValue(valueProperty);
 		float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
 		float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
 		float lineHeight = Mathf.Max(keyPropertyHeight, valuePropertyHeight);
-		conflictState.m_conflictLineHeight = lineHeight;
-		conflictState.m_conflictIndex = index;
-		conflictState.m_conflictOtherIndex = otherIndex;
-		conflictState.m_conflictKeyPropertyExpanded = keyProperty.isExpanded;
-		conflictState.m_conflictValuePropertyExpanded = valueProperty.isExpanded;
+		conflictState.conflictLineHeight = lineHeight;
+		conflictState.conflictIndex = index;
+		conflictState.conflictOtherIndex = otherIndex;
+		conflictState.conflictKeyPropertyExpanded = keyProperty.isExpanded;
+		conflictState.conflictValuePropertyExpanded = valueProperty.isExpanded;
 	}
 
 	public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -316,9 +316,9 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 
 			ConflictState conflictState = GetConflictState(property);
 
-			if(conflictState.m_conflictIndex != -1)
+			if(conflictState.conflictIndex != -1)
 			{
-				propertyHeight += conflictState.m_conflictLineHeight;
+				propertyHeight += conflictState.conflictLineHeight;
 			}
 		}
 

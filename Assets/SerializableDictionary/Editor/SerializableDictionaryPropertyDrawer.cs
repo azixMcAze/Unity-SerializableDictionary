@@ -17,6 +17,8 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 	static GUIContent m_warningIconOther = IconContent ("console.infoicon.sml", "Conflicting key");
 	static GUIContent m_warningIconNull = IconContent ("console.warnicon.sml", "Null key, this entry will be lost");
 	static GUIStyle m_buttonStyle = GUIStyle.none;
+	static GUIContent s_tempContent = new GUIContent();
+
 
 	class ConflictState
 	{
@@ -214,13 +216,13 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		}
 		else
 		{
-			var keyLabel = keyCanBeExpanded ? new GUIContent("Key " + index.ToString()) : GUIContent.none;
-			var valueLabel = valueCanBeExpanded ? new GUIContent("Value " + index.ToString()) : GUIContent.none;
+			var keyLabel = keyCanBeExpanded ? ("Key " + index.ToString()) : "";
+			var valueLabel = valueCanBeExpanded ? ("Value " + index.ToString()) : "";
 			return DrawKeyValueLineSimple(keyProperty, valueProperty, keyLabel, valueLabel, linePosition);
 		}
 	}
 
-	static float DrawKeyValueLineSimple(SerializedProperty keyProperty, SerializedProperty valueProperty, GUIContent keyLabel, GUIContent valueLabel, Rect linePosition)
+	static float DrawKeyValueLineSimple(SerializedProperty keyProperty, SerializedProperty valueProperty, string keyLabel, string valueLabel, Rect linePosition)
 	{
 		float labelWidth = EditorGUIUtility.labelWidth;
 		float labelWidthRelative = labelWidth / linePosition.width;
@@ -230,7 +232,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		keyPosition.height = keyPropertyHeight;
 		keyPosition.width = labelWidth - IndentWidth;
 		EditorGUIUtility.labelWidth = keyPosition.width * labelWidthRelative;
-		EditorGUI.PropertyField(keyPosition, keyProperty, keyLabel, true);
+		EditorGUI.PropertyField(keyPosition, keyProperty, TempContent(keyLabel), true);
 
 		float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
 		var valuePosition = linePosition;
@@ -238,7 +240,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		valuePosition.xMin += labelWidth;
 		EditorGUIUtility.labelWidth = valuePosition.width * labelWidthRelative;
 		EditorGUI.indentLevel--;
-		EditorGUI.PropertyField(valuePosition, valueProperty, valueLabel, true);
+		EditorGUI.PropertyField(valuePosition, valueProperty, TempContent(valueLabel), true);
 		EditorGUI.indentLevel++;
 	
 		EditorGUIUtility.labelWidth = labelWidth;
@@ -374,6 +376,12 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 	{
 		var builtinIcon = EditorGUIUtility.IconContent (name);
 		return new GUIContent(builtinIcon.image, tooltip);
+	}
+
+	static GUIContent TempContent(string text)
+	{
+		s_tempContent.text = text;
+		return s_tempContent;
 	}
 
 	static void DeleteArrayElementAtIndex(SerializedProperty arrayProperty, int index)

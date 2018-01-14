@@ -44,7 +44,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 	}
 
 	static Dictionary<PropertyIdentity, ConflictState> s_conflictStateDict = new Dictionary<PropertyIdentity, ConflictState>();
-	
+
 	enum Action
 	{
 		None,
@@ -81,7 +81,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 
 		var labelPosition = position;
 		labelPosition.height = EditorGUIUtility.singleLineHeight;
-		if (property.isExpanded) 
+		if (property.isExpanded)
 			labelPosition.xMax -= s_buttonStyle.CalcSize(s_iconPlus).x;
 
 		EditorGUI.PropertyField(labelPosition, property, label, false);
@@ -93,7 +93,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			buttonPosition.height = EditorGUIUtility.singleLineHeight;
 			EditorGUI.BeginDisabledGroup(conflictState.conflictIndex != -1);
 			if(GUI.Button(buttonPosition, s_iconPlus, s_buttonStyle))
-			{			
+			{
 				buttonAction = Action.Add;
 				buttonActionIndex = keyArrayProperty.arraySize;
 			}
@@ -140,7 +140,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 					GUI.Label(iconPosition, s_warningIconOther);
 				}
 
-				
+
 				linePosition.y += lineHeight;
 			}
 
@@ -190,7 +190,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				object keyProperty2Value = GetPropertyValue(keyProperty2);
 
 				if(object.Equals(keyProperty1Value, keyProperty2Value))
-				{					
+				{
 					var valueProperty2 = entry2.valueProperty;
 					SaveProperty(keyProperty2, valueProperty2, j, i, conflictState);
 					DeleteArrayElementAtIndex(keyArrayProperty, j);
@@ -226,7 +226,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 	{
 		float labelWidth = EditorGUIUtility.labelWidth;
 		float labelWidthRelative = labelWidth / linePosition.width;
-		
+
 		float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
 		var keyPosition = linePosition;
 		keyPosition.height = keyPropertyHeight;
@@ -242,7 +242,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		EditorGUI.indentLevel--;
 		EditorGUI.PropertyField(valuePosition, valueProperty, TempContent(valueLabel), true);
 		EditorGUI.indentLevel++;
-	
+
 		EditorGUIUtility.labelWidth = labelWidth;
 
 		return Mathf.Max(keyPropertyHeight, valuePropertyHeight);

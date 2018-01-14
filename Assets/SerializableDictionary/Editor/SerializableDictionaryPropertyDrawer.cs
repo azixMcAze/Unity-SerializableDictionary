@@ -513,3 +513,31 @@ public class DoubleLineSerializableDictionaryPropertyDrawer : SerializableDictio
 		return keyPropertyHeight + valuePropertyHeight;
 	}
 }
+
+public class MixedSerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer
+{
+	protected override float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
+	{
+		float labelWidth = EditorGUIUtility.labelWidth;
+
+		float keyPropertyHeight = GetKeyPropertyHeight(keyProperty);
+		var keyPosition = linePosition;
+		keyPosition.height = keyPropertyHeight;
+		keyPosition.width = labelWidth - IndentWidth;
+		DrawKeyProperty(keyProperty, keyPosition, GUIContent.none);
+
+		float valuePropertyHeight = GetValuePropertyHeight(valueProperty);
+		var valuePosition = linePosition;
+		valuePosition.height = valuePropertyHeight;
+		DrawValueProperty(valueProperty, valuePosition, GUIContent.none);
+
+		EditorGUIUtility.labelWidth = labelWidth;
+
+		return GetKeyValueLinePropertyHeight(keyPropertyHeight, valuePropertyHeight);
+	}
+
+	protected override float GetKeyValueLinePropertyHeight(float keyPropertyHeight, float valuePropertyHeight)
+	{
+		return Mathf.Max(keyPropertyHeight, valuePropertyHeight);
+	}
+}

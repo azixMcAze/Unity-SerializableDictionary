@@ -209,12 +209,18 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		bool valueCanBeExpanded = CanPropertyBeExpanded(valueProperty);
 
 		if(!keyCanBeExpanded && valueCanBeExpanded)
-			return DrawKeyValueLineExpand(keyProperty, valueProperty, linePosition, index);
+		{
+			return DrawKeyValueLineExpand(keyProperty, valueProperty, linePosition);
+		}
 		else
-			return DrawKeyValueLineSimple(keyProperty, valueProperty, linePosition, index);
+		{
+			var keyLabel = keyCanBeExpanded ? new GUIContent("Key " + index.ToString()) : GUIContent.none;
+			var valueLabel = valueCanBeExpanded ? new GUIContent("Value " + index.ToString()) : GUIContent.none;
+			return DrawKeyValueLineSimple(keyProperty, valueProperty, keyLabel, valueLabel, linePosition);
+		}
 	}
 
-	static float DrawKeyValueLineSimple(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
+	static float DrawKeyValueLineSimple(SerializedProperty keyProperty, SerializedProperty valueProperty, GUIContent keyLabel, GUIContent valueLabel, Rect linePosition)
 	{
 		float labelWidth = EditorGUIUtility.labelWidth;
 		float labelWidthRelative = labelWidth / linePosition.width;
@@ -224,7 +230,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		keyPosition.height = keyPropertyHeight;
 		keyPosition.width = labelWidth - IndentWidth;
 		EditorGUIUtility.labelWidth = keyPosition.width * labelWidthRelative;
-		EditorGUI.PropertyField(keyPosition, keyProperty, GUIContent.none, true);
+		EditorGUI.PropertyField(keyPosition, keyProperty, keyLabel, true);
 
 		float valuePropertyHeight = EditorGUI.GetPropertyHeight(valueProperty);
 		var valuePosition = linePosition;
@@ -232,7 +238,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		valuePosition.xMin += labelWidth;
 		EditorGUIUtility.labelWidth = valuePosition.width * labelWidthRelative;
 		EditorGUI.indentLevel--;
-		EditorGUI.PropertyField(valuePosition, valueProperty, GUIContent.none, true);
+		EditorGUI.PropertyField(valuePosition, valueProperty, valueLabel, true);
 		EditorGUI.indentLevel++;
 	
 		EditorGUIUtility.labelWidth = labelWidth;
@@ -240,7 +246,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		return Mathf.Max(keyPropertyHeight, valuePropertyHeight);
 	}
 
-	static float DrawKeyValueLineExpand(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
+	static float DrawKeyValueLineExpand(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition)
 	{
 		float labelWidth = EditorGUIUtility.labelWidth;
 

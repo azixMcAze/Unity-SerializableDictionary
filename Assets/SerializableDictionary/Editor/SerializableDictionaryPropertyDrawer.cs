@@ -279,7 +279,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		}
 	}
 
-	void SaveProperty(SerializedProperty keyProperty, SerializedProperty valueProperty, int index, int otherIndex, ConflictState conflictState)
+	static void SaveProperty(SerializedProperty keyProperty, SerializedProperty valueProperty, int index, int otherIndex, ConflictState conflictState)
 	{
 		conflictState.m_conflictKey = GetPropertyValue(keyProperty);
 		conflictState.m_conflictValue = GetPropertyValue(valueProperty);

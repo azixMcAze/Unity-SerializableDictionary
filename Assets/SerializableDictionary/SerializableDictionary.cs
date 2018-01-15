@@ -73,7 +73,7 @@ public abstract class SerializableArrayDictionary
 	}
 }
 
-public class SerializableArrayDictionary<TKey, TValue, TArray> : Dictionary<TKey, TValue[]>, ISerializationCallbackReceiver  where TArray : SerializableArrayDictionary.Array<TValue>
+public class SerializableArrayDictionary<TKey, TValue, TArray> : Dictionary<TKey, TValue[]>, ISerializationCallbackReceiver  where TArray : SerializableArrayDictionary.Array<TValue>, new()
 {
 	[SerializeField]
 	TKey[] m_keys;
@@ -128,6 +128,7 @@ public class SerializableArrayDictionary<TKey, TValue, TArray> : Dictionary<TKey
 		foreach(var kvp in this)
 		{
 			m_keys[i] = kvp.Key;
+			m_values[i] = new TArray();
 			m_values[i].array = kvp.Value;
 			++i;
 		}

@@ -64,7 +64,7 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
 	}
 }
 
-public abstract class SerializableArrayDictionary
+public static class SerializableArrayDictionary
 {
 	[Serializable]
 	public class Array<T>

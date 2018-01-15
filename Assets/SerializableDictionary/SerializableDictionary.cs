@@ -63,3 +63,73 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
 		}
 	}
 }
+
+public abstract class SerializableArrayDictionary
+{
+	[Serializable]
+	public class Array<T>
+	{
+		public T[] array;
+	}
+}
+
+public class SerializableArrayDictionary<TKey, TValue, TArray> : Dictionary<TKey, TValue[]>, ISerializationCallbackReceiver  where TArray : SerializableArrayDictionary.Array<TValue>
+{
+	[SerializeField]
+	TKey[] m_keys;
+	[SerializeField]
+	TArray[] m_values;
+
+	public SerializableArrayDictionary()
+	{
+	}
+
+	public SerializableArrayDictionary(IDictionary<TKey, TValue[]> dict) : base(dict.Count)
+	{
+		foreach (var kvp in dict)
+		{
+			this[kvp.Key] = kvp.Value;
+		}
+	}
+
+	public void CopyFrom(IDictionary<TKey, TValue[]> dict)
+	{
+		this.Clear();
+		foreach (var kvp in dict)
+		{
+			this[kvp.Key] = kvp.Value;
+		}
+	}
+
+	public void OnAfterDeserialize()
+	{
+		if(m_keys != null && m_values != null && m_keys.Length == m_values.Length)
+		{
+			this.Clear();
+			int n = m_keys.Length;
+			for(int i = 0; i < n; ++i)
+			{
+				this[m_keys[i]] = m_values[i].array;
+			}
+
+			m_keys = null;
+			m_values = null;
+		}
+
+	}
+
+	public void OnBeforeSerialize()
+	{
+		int n = this.Count;
+		m_keys = new TKey[n];
+		m_values = new TArray[n];
+
+		int i = 0;
+		foreach(var kvp in this)
+		{
+			m_keys[i] = kvp.Key;
+			m_values[i].array = kvp.Value;
+			++i;
+		}
+	}
+}

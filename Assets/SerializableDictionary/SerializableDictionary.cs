@@ -64,27 +64,26 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
 	}
 }
 
-public static class SerializableArrayDictionary
+public static class SerializableIlistDictionary
 {
-	[Serializable]
-	public class Array<T>
+	public class DictArray<TList, TListElement> where TList : IList<TListElement>
 	{
-		public T[] array;
+		public TList array;
 	}
 }
 
-public class SerializableArrayDictionary<TKey, TValue, TArray> : Dictionary<TKey, TValue[]>, ISerializationCallbackReceiver  where TArray : SerializableArrayDictionary.Array<TValue>, new()
+public class SerializableIListDictionary<TKey, TList, TListElement, TDictList> : Dictionary<TKey, TList>, ISerializationCallbackReceiver where TList : IList<TListElement> where TDictList : SerializableIlistDictionary.DictArray<TList, TListElement>, new()
 {
 	[SerializeField]
 	TKey[] m_keys;
 	[SerializeField]
-	TArray[] m_values;
+	TDictList[] m_values;
 
-	public SerializableArrayDictionary()
+	public SerializableIListDictionary()
 	{
 	}
 
-	public SerializableArrayDictionary(IDictionary<TKey, TValue[]> dict) : base(dict.Count)
+	public SerializableIListDictionary(IDictionary<TKey, TList> dict) : base(dict.Count)
 	{
 		foreach (var kvp in dict)
 		{
@@ -92,7 +91,7 @@ public class SerializableArrayDictionary<TKey, TValue, TArray> : Dictionary<TKey
 		}
 	}
 
-	public void CopyFrom(IDictionary<TKey, TValue[]> dict)
+	public void CopyFrom(IDictionary<TKey, TList> dict)
 	{
 		this.Clear();
 		foreach (var kvp in dict)
@@ -122,15 +121,38 @@ public class SerializableArrayDictionary<TKey, TValue, TArray> : Dictionary<TKey
 	{
 		int n = this.Count;
 		m_keys = new TKey[n];
-		m_values = new TArray[n];
+		m_values = new TDictList[n];
 
 		int i = 0;
 		foreach(var kvp in this)
 		{
 			m_keys[i] = kvp.Key;
-			m_values[i] = new TArray();
+			m_values[i] = new TDictList();
 			m_values[i].array = kvp.Value;
 			++i;
 		}
 	}
 }
+
+public static class SerializableArrayDictionary
+{
+	public class Array<T> : SerializableIlistDictionary.DictArray<T[], T>
+	{
+	}
+}
+
+public class SerializableArrayDictionary<TKey, TArrayElement, TDictArray> : SerializableIListDictionary<TKey, TArrayElement[], TArrayElement, TDictArray> where TDictArray : SerializableArrayDictionary.Array<TArrayElement>, new()
+{
+}
+
+public static class SerializableListDictionary
+{
+	public class List<T> : SerializableIlistDictionary.DictArray<System.Collections.Generic.List<T>, T>
+	{
+	}
+}
+
+public class SerializableListDictionary<TKey, TListElement, TDictList> : SerializableIListDictionary<TKey, List<TListElement>, TListElement, TDictList> where TDictList : SerializableListDictionary.List<TListElement>, new()
+{
+}
+

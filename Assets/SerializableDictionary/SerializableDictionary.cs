@@ -66,13 +66,13 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
 
 public static class SerializableIlistDictionary
 {
-	public class DictArray<TList, TListElement> where TList : IList<TListElement>
+	public class List<TList, TListElement> where TList : IList<TListElement>
 	{
 		public TList array;
 	}
 }
 
-public class SerializableIListDictionary<TKey, TList, TListElement, TDictList> : Dictionary<TKey, TList>, ISerializationCallbackReceiver where TList : IList<TListElement> where TDictList : SerializableIlistDictionary.DictArray<TList, TListElement>, new()
+public class SerializableIListDictionary<TKey, TList, TListElement, TDictList> : Dictionary<TKey, TList>, ISerializationCallbackReceiver where TList : IList<TListElement> where TDictList : SerializableIlistDictionary.List<TList, TListElement>, new()
 {
 	[SerializeField]
 	TKey[] m_keys;
@@ -136,7 +136,7 @@ public class SerializableIListDictionary<TKey, TList, TListElement, TDictList> :
 
 public static class SerializableArrayDictionary
 {
-	public class Array<T> : SerializableIlistDictionary.DictArray<T[], T>
+	public class Array<T> : SerializableIlistDictionary.List<T[], T>
 	{
 	}
 }
@@ -147,7 +147,7 @@ public class SerializableArrayDictionary<TKey, TArrayElement, TDictArray> : Seri
 
 public static class SerializableListDictionary
 {
-	public class List<T> : SerializableIlistDictionary.DictArray<System.Collections.Generic.List<T>, T>
+	public class List<T> : SerializableIlistDictionary.List<System.Collections.Generic.List<T>, T>
 	{
 	}
 }
@@ -155,4 +155,3 @@ public static class SerializableListDictionary
 public class SerializableListDictionary<TKey, TListElement, TDictList> : SerializableIListDictionary<TKey, List<TListElement>, TListElement, TDictList> where TDictList : SerializableListDictionary.List<TListElement>, new()
 {
 }
-

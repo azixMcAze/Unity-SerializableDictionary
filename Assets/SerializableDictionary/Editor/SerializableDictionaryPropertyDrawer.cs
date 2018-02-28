@@ -189,7 +189,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				int j = entry2.index;
 				object keyProperty2Value = GetPropertyValue(keyProperty2);
 
-				if(object.Equals(keyProperty1Value, keyProperty2Value))
+				if(ComparePropertyValues(keyProperty1Value, keyProperty2Value))
 				{
 					var valueProperty2 = entry2.valueProperty;
 					SaveProperty(keyProperty2, valueProperty2, j, i, conflictState);
@@ -480,6 +480,44 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 				SetPropertyValue(iterator, dict[name]);
 			} while(iterator.Next(false) && iterator.propertyPath != end.propertyPath);
 		}
+	}
+
+	static bool ComparePropertyValues(object value1, object value2)
+	{
+		if(value1 == null && value2 == null)
+			return true;
+		else if(value1 == null || value2 == null)
+			return false;
+		else if(value1 is Dictionary<string, object> && value1 is Dictionary<string, object>)
+		{
+			var dict1 = (Dictionary<string, object>)value1;
+			var dict2 = (Dictionary<string, object>)value2;
+			return CompareDictionaries(dict1, dict2);
+		}
+		else
+		{
+			return object.Equals(value1, value2);
+		}
+	}
+
+	static bool CompareDictionaries(Dictionary<string, object> dict1, Dictionary<string, object> dict2)
+	{
+		if(dict1.Count != dict2.Count)
+			return false;
+
+		foreach(var kvp1 in dict1)
+		{
+			var key1 = kvp1.Key;
+			object value1 = kvp1.Value;
+			object value2;
+			if(dict2.TryGetValue(key1, out value2))
+			{
+				if(!ComparePropertyValues(value1, value2))
+					return false;
+			}
+		}
+		
+		return true;
 	}
 
 	struct EnumerationEntry

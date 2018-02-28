@@ -484,11 +484,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 
 	static bool ComparePropertyValues(object value1, object value2)
 	{
-		if(value1 == null && value2 == null)
-			return true;
-		else if(value1 == null || value2 == null)
-			return false;
-		else if(value1 is Dictionary<string, object> && value2 is Dictionary<string, object>)
+		if(value1 is Dictionary<string, object> && value2 is Dictionary<string, object>)
 		{
 			var dict1 = (Dictionary<string, object>)value1;
 			var dict2 = (Dictionary<string, object>)value2;

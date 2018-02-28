@@ -488,7 +488,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 			return true;
 		else if(value1 == null || value2 == null)
 			return false;
-		else if(value1 is Dictionary<string, object> && value1 is Dictionary<string, object>)
+		else if(value1 is Dictionary<string, object> && value2 is Dictionary<string, object>)
 		{
 			var dict1 = (Dictionary<string, object>)value1;
 			var dict2 = (Dictionary<string, object>)value2;
@@ -509,7 +509,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		{
 			var key1 = kvp1.Key;
 			object value1 = kvp1.Value;
-			
+
 			object value2;
 			if(!dict2.TryGetValue(key1, out value2))
 				return false;

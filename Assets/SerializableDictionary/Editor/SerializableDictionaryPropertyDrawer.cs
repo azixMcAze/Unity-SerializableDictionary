@@ -514,7 +514,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 	}
 }
 
-public class SerializableArrayDictionaryArrayPropertyDrawer : PropertyDrawer
+public class ListStoragePropertyDrawer : PropertyDrawer
 {
 	public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 	{

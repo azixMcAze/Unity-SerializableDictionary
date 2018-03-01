@@ -5,24 +5,24 @@ using UnityEngine;
 
 public static class SerializableIlistDictionary
 {
-	public class List<TList, TListElement> where TList : IList<TListElement>
+	public class ListStorage<TList, TListElement> where TList : IList<TListElement>
 	{
 		public TList array;
 	}
 }
 
-public class SerializableIListDictionary<TKey, TList, TListElement, TDictList> : Dictionary<TKey, TList>, ISerializationCallbackReceiver where TList : IList<TListElement> where TDictList : SerializableIlistDictionary.List<TList, TListElement>, new()
+public class SerializableIListDictionary<TKey, TListValue, TListValueElement, TListStorage> : Dictionary<TKey, TListValue>, ISerializationCallbackReceiver where TListValue : IList<TListValueElement> where TListStorage : SerializableIlistDictionary.ListStorage<TListValue, TListValueElement>, new()
 {
 	[SerializeField]
 	TKey[] m_keys;
 	[SerializeField]
-	TDictList[] m_values;
+	TListStorage[] m_values;
 
 	public SerializableIListDictionary()
 	{
 	}
 
-	public SerializableIListDictionary(IDictionary<TKey, TList> dict) : base(dict.Count)
+	public SerializableIListDictionary(IDictionary<TKey, TListValue> dict) : base(dict.Count)
 	{
 		foreach (var kvp in dict)
 		{
@@ -30,7 +30,7 @@ public class SerializableIListDictionary<TKey, TList, TListElement, TDictList> :
 		}
 	}
 
-	public void CopyFrom(IDictionary<TKey, TList> dict)
+	public void CopyFrom(IDictionary<TKey, TListValue> dict)
 	{
 		this.Clear();
 		foreach (var kvp in dict)
@@ -60,13 +60,13 @@ public class SerializableIListDictionary<TKey, TList, TListElement, TDictList> :
 	{
 		int n = this.Count;
 		m_keys = new TKey[n];
-		m_values = new TDictList[n];
+		m_values = new TListStorage[n];
 
 		int i = 0;
 		foreach(var kvp in this)
 		{
 			m_keys[i] = kvp.Key;
-			m_values[i] = new TDictList();
+			m_values[i] = new TListStorage();
 			m_values[i].array = kvp.Value;
 			++i;
 		}
@@ -75,22 +75,22 @@ public class SerializableIListDictionary<TKey, TList, TListElement, TDictList> :
 
 public static class SerializableArrayDictionary
 {
-	public class Array<T> : SerializableIlistDictionary.List<T[], T>
+	public class ArrayStorage<T> : SerializableIlistDictionary.ListStorage<T[], T>
 	{
 	}
 }
 
-public class SerializableArrayDictionary<TKey, TArrayElement, TDictArray> : SerializableIListDictionary<TKey, TArrayElement[], TArrayElement, TDictArray> where TDictArray : SerializableArrayDictionary.Array<TArrayElement>, new()
+public class SerializableArrayDictionary<TKey, TArrayValueElement, TArrayStorage> : SerializableIListDictionary<TKey, TArrayValueElement[], TArrayValueElement, TArrayStorage> where TArrayStorage : SerializableArrayDictionary.ArrayStorage<TArrayValueElement>, new()
 {
 }
 
 public static class SerializableListDictionary
 {
-	public class List<T> : SerializableIlistDictionary.List<System.Collections.Generic.List<T>, T>
+	public class ListStorage<T> : SerializableIlistDictionary.ListStorage<List<T>, T>
 	{
 	}
 }
 
-public class SerializableListDictionary<TKey, TListElement, TDictList> : SerializableIListDictionary<TKey, List<TListElement>, TListElement, TDictList> where TDictList : SerializableListDictionary.List<TListElement>, new()
+public class SerializableListDictionary<TKey, TListValueElement, TListStorage> : SerializableIListDictionary<TKey, List<TListValueElement>, TListValueElement, TListStorage> where TListStorage : SerializableListDictionary.ListStorage<TListValueElement>, new()
 {
 }

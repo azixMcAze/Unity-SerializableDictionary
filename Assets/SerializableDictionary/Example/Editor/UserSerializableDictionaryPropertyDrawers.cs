@@ -8,5 +8,5 @@ using UnityEditor;
 [CustomPropertyDrawer(typeof(ObjectColorArrayDictionary))]
 public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
 
-[CustomPropertyDrawer(typeof(ColorArray))]
-public class AnySerializableArrayDictionaryArrayPropertyDrawer : SerializableArrayDictionaryArrayPropertyDrawer {}
+[CustomPropertyDrawer(typeof(ColorArrayStorage))]
+public class AnyListStoragePropertyDrawer : ListStoragePropertyDrawer {}

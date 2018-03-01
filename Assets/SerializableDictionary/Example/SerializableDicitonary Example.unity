@@ -162,7 +162,8 @@ MonoBehaviour:
     - {r: 1, g: 0, b: 0, a: 1}
   m_objectColorArrayDictionary:
     m_keys:
-    - {fileID: 714127983}
+    - rainbow
+    - grayscale
     m_values:
     - array:
       - {r: 1, g: 0, b: 0, a: 1}
@@ -171,6 +172,12 @@ MonoBehaviour:
       - {r: 0, g: 0.9916434, b: 1, a: 1}
       - {r: 0.011141777, g: 0, b: 1, a: 1}
       - {r: 1, g: 0, b: 0.98607254, a: 1}
+    - array:
+      - {r: 0, g: 0, b: 0, a: 1}
+      - {r: 0.2509804, g: 0.2509804, b: 0.2509804, a: 1}
+      - {r: 0.49803922, g: 0.49803922, b: 0.49803922, a: 1}
+      - {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+      - {r: 1, g: 1, b: 1, a: 1}
 --- !u!81 &714127985
 AudioListener:
   m_ObjectHideFlags: 0

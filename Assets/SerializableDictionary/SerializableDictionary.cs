@@ -21,6 +21,8 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
 			this[kvp.Key] = kvp.Value;
 		}
 	}
+	
+	protected SerializableDictionary(SerializationInfo info, StreamingContext context) : base(info,context){}
 
 	public void CopyFrom(IDictionary<TKey, TValue> dict)
 	{

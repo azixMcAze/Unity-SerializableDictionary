@@ -5,13 +5,13 @@ using UnityEngine;
 
 public static class SerializableIlistDictionary
 {
-	public class ListStorage<TList, TListElement> where TList : IList<TListElement>
+	public class Storage<TList, TListElement> where TList : IList<TListElement>
 	{
 		public TList list;
 	}
 }
 
-public class SerializableIListDictionary<TKey, TListValue, TListValueElement, TListStorage> : Dictionary<TKey, TListValue>, ISerializationCallbackReceiver where TListValue : IList<TListValueElement> where TListStorage : SerializableIlistDictionary.ListStorage<TListValue, TListValueElement>, new()
+public class SerializableIListDictionary<TKey, TListValue, TListValueElement, TListStorage> : Dictionary<TKey, TListValue>, ISerializationCallbackReceiver where TListValue : IList<TListValueElement> where TListStorage : SerializableIlistDictionary.Storage<TListValue, TListValueElement>, new()
 {
 	[SerializeField]
 	TKey[] m_keys;
@@ -75,22 +75,22 @@ public class SerializableIListDictionary<TKey, TListValue, TListValueElement, TL
 
 public static class SerializableArrayDictionary
 {
-	public class ArrayStorage<T> : SerializableIlistDictionary.ListStorage<T[], T>
+	public class Storage<T> : SerializableIlistDictionary.Storage<T[], T>
 	{
 	}
 }
 
-public class SerializableArrayDictionary<TKey, TArrayValueElement, TArrayStorage> : SerializableIListDictionary<TKey, TArrayValueElement[], TArrayValueElement, TArrayStorage> where TArrayStorage : SerializableArrayDictionary.ArrayStorage<TArrayValueElement>, new()
+public class SerializableArrayDictionary<TKey, TArrayValueElement, TArrayStorage> : SerializableIListDictionary<TKey, TArrayValueElement[], TArrayValueElement, TArrayStorage> where TArrayStorage : SerializableArrayDictionary.Storage<TArrayValueElement>, new()
 {
 }
 
 public static class SerializableListDictionary
 {
-	public class ListStorage<T> : SerializableIlistDictionary.ListStorage<List<T>, T>
+	public class Storage<T> : SerializableIlistDictionary.Storage<List<T>, T>
 	{
 	}
 }
 
-public class SerializableListDictionary<TKey, TListValueElement, TListStorage> : SerializableIListDictionary<TKey, List<TListValueElement>, TListValueElement, TListStorage> where TListStorage : SerializableListDictionary.ListStorage<TListValueElement>, new()
+public class SerializableListDictionary<TKey, TListValueElement, TListStorage> : SerializableIListDictionary<TKey, List<TListValueElement>, TListValueElement, TListStorage> where TListStorage : SerializableListDictionary.Storage<TListValueElement>, new()
 {
 }

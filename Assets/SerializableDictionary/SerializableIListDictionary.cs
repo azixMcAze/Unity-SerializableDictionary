@@ -7,7 +7,7 @@ public static class SerializableIlistDictionary
 {
 	public class ListStorage<TList, TListElement> where TList : IList<TListElement>
 	{
-		public TList array;
+		public TList list;
 	}
 }
 
@@ -47,7 +47,7 @@ public class SerializableIListDictionary<TKey, TListValue, TListValueElement, TL
 			int n = m_keys.Length;
 			for(int i = 0; i < n; ++i)
 			{
-				this[m_keys[i]] = m_values[i].array;
+				this[m_keys[i]] = m_values[i].list;
 			}
 
 			m_keys = null;
@@ -67,7 +67,7 @@ public class SerializableIListDictionary<TKey, TListValue, TListValueElement, TL
 		{
 			m_keys[i] = kvp.Key;
 			m_values[i] = new TListStorage();
-			m_values[i].array = kvp.Value;
+			m_values[i].list = kvp.Value;
 			++i;
 		}
 	}

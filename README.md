@@ -26,7 +26,7 @@ This project provides a generic dictionary class and its custom property drawer 
 - A non-generic derived class has to be created for each `<TKey, TValue>` combination you want to use. A `CustomPropertyDrawer` has to be declared for each of these classes.
 - Multiple editing of scripts using `SerializableDictionaries` in the inspector is not supported. The inspector will show the dictionaries but data loss is likely to occur.
 - The conflicting key detection does not work when using `LayerMask` as key. The `LayerMask` value is changed after the `CustomPropertyDrawer` execution.
-- Dictionaries of lists must use the special `SerializableListDictionary<TKey, TListValueElement, TListStorage>` dictionary class with the extra `SerializableListDictionary.Storage<TValue>` class to hold the values. See the "Dictionnary of lists or arrays" section for details.
+- Dictionaries of lists must use the special `SerializableListDictionary<TKey, TListValueElement, TListStorage>` dictionary class with the extra `SerializableListDictionary.Storage<TValue>` class to hold the values. See the "Dictionary of lists or arrays" section for details.
 - Dictionaries of arrays must use `SerializableArrayDictionary<TKey, TArrayValueElement, TArrayStorage>` and `SerializableArrayDictionary.Storage<TValue>`.
 
 
@@ -163,20 +163,20 @@ public class StringColorDictionary : SerializableDictionary<string, Color>
 }
 ```
 
-### Dictionnary of lists or arrays
+### Dictionary of lists or arrays
 
 Because unity cannot serialize a array of lists or an array of arrays, using a `SerializableDictionary<TKey, TValue[]>` or a `SerializableDictionary<TKey, List<TValue>>` in a script will not work properly. The dictionary will not show up in the inspector and the values will not be saved.
 
 It is necessary to create an intermediate class that will contain the list or array. This class can then be contained in an array and be serialized by Unity.
 
-Create a class that inherits from `SerializableArrayDictionary.Storage<TValue>` if you want to create a dictionary of arrays (`SerializableDictionary<TKey, TValue[]>`) or from `SerializableListDictionary.Storage<TValue>` for a dictionary of lists (`SerializableDictionary<TKey, List<TValue>>`). These strorage classes only contain the `TValue[] list` or the `List<TValue> list` field.
+Create a class that inherits from `SerializableArrayDictionary.Storage<TValue>` if you want to create a dictionary of arrays (`SerializableDictionary<TKey, TValue[]>`) or from `SerializableListDictionary.Storage<TValue>` for a dictionary of lists (`SerializableDictionary<TKey, List<TValue>>`). These storage classes only contain the `TValue[] list` or the `List<TValue> list` field.
 
 ```csharp
 [Serializable]
 public class ColorListStorage : SerializableListDictionary.Storage<Color> {}
 ```
 
-If you use this storage class directly with SerializableDictionaty, you will have to access the list or array through the `.list` field of the `Storage` class because your dictionanry will inherit from `Dictionary<TKey, Storage<TValue>>` instead of `Dictionary<TKey, TValue[]>`. This is far from ideal.
+If you use this storage class directly with SerializableDictionary, you will have to access the list or array through the `.list` field of the `Storage` class because your dictionary will inherit from `Dictionary<TKey, Storage<TValue>>` instead of `Dictionary<TKey, TValue[]>`. This is far from ideal.
 
 ```csharp
 // non optimal example for a dictionary of color array
@@ -193,11 +193,11 @@ List<Color> colorList = m_colorStringListDict[key].list;
 
 To access the lists directly, use the special `SerializableListDictionary<TKey, TListValueElement, TListStorage>` class.
 - `TKey` is the type of the keys as usual.
-- `TListValueElement` is the type contained in the list, `TValue` for a dictionnary of `List<TValue>`. 
+- `TListValueElement` is the type contained in the list, `TValue` for a dictionary of `List<TValue>`. 
 - `TListStorage` is the storage class holding the list, a class inheriting from `SerializableListDictionary.Storage<TValue>` for a dictionary of `List<TValue>`.
 
 This is similar for the arrays. Use the special `SerializableArrayDictionary<TKey, TArrayValueElement, TArrayStorage>` class.
-- `TArrayValueElement` is the type contained in the array, `TValue` for a dictionnary of `TValue[]`. 
+- `TArrayValueElement` is the type contained in the array, `TValue` for a dictionary of `TValue[]`. 
 - `TArrayStorage` is the storage class holding the array, a class inheriting from `SerializableArrayDictionary.Storage<TValue>` for a dictionary of `TValue[]`.
 
 ```csharp

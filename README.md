@@ -32,18 +32,6 @@ This project provides a generic dictionary class and its custom property drawer 
 
 ## Usage
 
-### Installation
-
-Copy these files in your project:
-- `Assets/`
-    - `Scripts/`
-        - `SerializableDictionary.cs`
-        - `UserSerializableDictionaryPropertyDrawer.cs` (optional)
-    - `Editor/`
-        - `SerializableDictionaryPropertyDrawer.cs`
-        - `UserSerializableDictionaries.cs` (optional)
-
-
 ### Simple dictionary example 
 
 To create a serializable dictionary of type `<string, string>`:

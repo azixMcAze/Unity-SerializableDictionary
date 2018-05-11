@@ -32,6 +32,8 @@ This project provides a generic dictionary class and its custom property drawer 
 
 ## Usage
 
+### Installation
+
 Copy these files in your project:
 - `Assets/`
     - `Scripts/`
@@ -40,6 +42,61 @@ Copy these files in your project:
     - `Editor/`
         - `SerializableDictionaryPropertyDrawer.cs`
         - `UserSerializableDictionaries.cs` (optional)
+
+
+### Simple dictionary example 
+
+To create a serializable dictionary of type `<string, string>`:
+-  Create a `SerializableDictionary` subclass
+    ```csharp
+    [Serializable]
+    public class StringStringDictionary : SerializableDictionary<string, string> {}
+    ```
+- Create a `SerializableDictionaryPropertyDrawer` subclass in an editor folder or use an existing one.
+- Add a `CustomPropertyDrawer` attribute to this class.
+    ```csharp
+    [CustomPropertyDrawer(typeof(StringStringDictionary))]
+    public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
+    ```
+- The attributes for all the `SerializableDictionary` subclasses can be added to the same `SerializableDictionaryPropertyDrawer` subclass.
+- Use `StringStringDictionary` in your scripts as a normal `IDictionary<string, string>` type
+
+
+### Dictionary of lists example 
+
+To create a serializable dictionary of type `<string, List<Color>>`:
+- Create a `SerializableListDictionary.Storage` subclass for the type contained in the list
+    ```csharp
+    [Serializable]
+    public class ColorListStorage : SerializableListDictionary.Storage<Color> {}
+    ```
+- Create a `ListStoragePropertyDrawer` subclass in an editor folder or use an existing one.
+- Add a `CustomPropertyDrawer` attribute to this class. 
+    ```csharp
+    [CustomPropertyDrawer(typeof(ColorListStorage))]
+    public class AnyListStoragePropertyDrawer : ListStoragePropertyDrawer {}
+    ```
+-  Create a `SerializableListDictionary` subclass using the type of the key, the type contained in the value list and the previous subclass
+    ```csharp
+    [Serializable]
+    public class StringColorListDictionary : SerializableListDictionary<string, Color, ColorListStorage> {}
+    ```
+- Create a `SerializableDictionaryPropertyDrawer` subclass in an editor folder or use an existing one.
+- Add a `CustomPropertyDrawer` attribute to this class. 
+    ```csharp
+    [CustomPropertyDrawer(typeof(StringColorListDictionary))]
+    public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
+    ```
+- The attributes for all the `SerializableDictionary` subclasses can be added to the same `SerializableDictionaryPropertyDrawer` subclass.
+- Use `StringColorListDictionary` in your scripts as a normal `IDictionary<string, List<Color>>` type
+
+
+### Dictionary of arrays example 
+
+See the list example but use `SerializableArrayDictionary` instead of `SerializableListDictionary`. You can use the same `ListStoragePropertyDrawer` subclass.
+
+
+## Details
 
 As Unity is unable to directly serialize generic types, create a derived class for each `SerializedDictionary` specialization you want.
 ```csharp

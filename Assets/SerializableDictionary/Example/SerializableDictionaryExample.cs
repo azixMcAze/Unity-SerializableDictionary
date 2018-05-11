@@ -13,6 +13,7 @@ public class SerializableDictionaryExample : MonoBehaviour {
 	}
 
 	public ObjectColorDictionary m_objectColorDictionary;
+	public StringColorArrayDictionary m_objectColorArrayDictionary;
 
 	void Reset ()
 	{

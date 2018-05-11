@@ -20,7 +20,7 @@ This project provides a generic dictionary class and its custom property drawer 
     ![Conflicting keys screenshot](https://azixmcaze.github.io/Unity-SerializableDictionary/SerializableDictionary_screenshot2.png)
 
     ![Null key screenshot](https://azixmcaze.github.io/Unity-SerializableDictionary/SerializableDictionary_screenshot3.png)
-- You can customize the layout of the dictionnary inspector by subclassing the custom property drawer. A single line layout and a two line layout are provided by default.
+
 
 ## Limitations
 - A non-generic derived class has to be created for each `<TKey, TValue>` combination you want to use. A `CustomPropertyDrawer` has to be declared for each of these classes.
@@ -62,15 +62,13 @@ public class StringMyClassDictionary : SerializableDictionary<string, MyClass> {
 
 
 
-Declare the custom property drawer for these new types by adding the `CustomPropertyDrawer` attribute to one of the `SerializableDictionaryPropertyDrawer` derived classes. Use `SingleLineSerializableDictionaryPropertyDrawer` for a single-line layout and `DoubleLineSerializableDictionaryPropertyDrawer` for a double line layout. The single line layout is recommended for simple types and the double line layouts for types that are displayed with a foldout in the inspector, such as custom classes or `Quaternions`.
+Declare the custom property drawer for these new types by adding the `CustomPropertyDrawer` attribute to one of the `SerializableDictionaryPropertyDrawer` derived classes.
 
 ```csharp
 [CustomPropertyDrawer(typeof(StringStringDictionary))]
 [CustomPropertyDrawer(typeof(MyScriptColorDictionary))]
-public class AnySingleLineSerializableDictionaryPropertyDrawer : SingleLineSerializableDictionaryPropertyDrawer {}
-
 [CustomPropertyDrawer(typeof(StringMyClassDictionary))]
-public class AnyDoubleLineSerializableDictionaryPropertyDrawer : DoubeLineSerializableDictionaryPropertyDrawer {}
+public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
 ```
 
 It is recommended to create one derived class in a separate file and add the attributes to this class instead of modifying the original `SerializableDictionaryPropertyDrawer` class.

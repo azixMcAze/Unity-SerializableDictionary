@@ -11,8 +11,8 @@ public abstract class SerializableDictionaryBase<TKey, TValue, TValueStorage> : 
 	[SerializeField]
 	TValueStorage[] m_values;
 
-	protected abstract void StoreValue(ref TValueStorage storage, TValue value);
-	protected abstract TValue GetValue(TValueStorage storage);
+	protected abstract void SetValue(TValueStorage[] storage, int i, TValue value);
+	protected abstract TValue GetValue(TValueStorage[] storage, int i);
 
 	public SerializableDictionaryBase()
 	{
@@ -45,7 +45,7 @@ public abstract class SerializableDictionaryBase<TKey, TValue, TValueStorage> : 
 			int n = m_keys.Length;
 			for(int i = 0; i < n; ++i)
 			{
-				this[m_keys[i]] = GetValue(m_values[i]);
+				this[m_keys[i]] = GetValue(m_values, i);
 			}
 
 			m_keys = null;
@@ -64,7 +64,7 @@ public abstract class SerializableDictionaryBase<TKey, TValue, TValueStorage> : 
 		foreach(var kvp in this)
 		{
 			m_keys[i] = kvp.Key;
-			StoreValue(ref m_values[i], kvp.Value);
+			SetValue(m_values, i, kvp.Value);
 			++i;
 		}
 	}
@@ -72,14 +72,14 @@ public abstract class SerializableDictionaryBase<TKey, TValue, TValueStorage> : 
 
 public class SerializableDictionary<TKey, TValue> : SerializableDictionaryBase<TKey, TValue, TValue>
 {
-    protected override TValue GetValue(TValue storage)
+    protected override TValue GetValue(TValue[] storage, int i)
     {
-        return storage;
+        return storage[i];
     }
 
-    protected override void StoreValue(ref TValue storage, TValue value)
+    protected override void SetValue(TValue[] storage, int i, TValue value)
     {
-        storage = value;
+        storage[i] = value;
     }
 
 	public SerializableDictionary()
@@ -109,15 +109,15 @@ public class SerializableIListDictionary<TKey, TListValue, TListValueElement, TL
 	{
 	}
 
-    protected override TListValue GetValue(TListStorage storage)
+    protected override TListValue GetValue(TListStorage[] storage, int i)
     {
-		return storage.list;
+		return storage[i].list;
     }
 
-    protected override void StoreValue(ref TListStorage storage, TListValue value)
+    protected override void SetValue(TListStorage[] storage, int i, TListValue value)
     {
-        storage = new TListStorage();
-        storage.list = value;
+        storage[i] = new TListStorage();
+        storage[i].list = value;
     }
 }
 

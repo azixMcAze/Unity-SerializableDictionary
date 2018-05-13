@@ -26,8 +26,7 @@ This project provides a generic dictionary class and its custom property drawer 
 - A non-generic derived class has to be created for each `<TKey, TValue>` combination you want to use. A `CustomPropertyDrawer` has to be declared for each of these classes.
 - Multiple editing of scripts using `SerializableDictionaries` in the inspector is not supported. The inspector will show the dictionaries but data loss is likely to occur.
 - The conflicting key detection does not work when using `LayerMask` as key. The `LayerMask` value is changed after the `CustomPropertyDrawer` execution.
-- Dictionaries of lists must use the special `SerializableListDictionary<TKey, TListValueElement, TListStorage>` dictionary class with the extra `SerializableListDictionary.Storage<TValue>` class to hold the values. See the "Dictionary of lists or arrays" section for details.
-- Dictionaries of arrays must use `SerializableArrayDictionary<TKey, TArrayValueElement, TArrayStorage>` and `SerializableArrayDictionary.Storage<TValue>`.
+- Dictionaries of lists or arrays must use the 3 arguments `SerializableDictionary<TKey, TValue, TValueStorage>` dictionary class with the extra `SerializableDictionary.Storage<TValue>` class to hold the values. See the "Dictionary of lists or arrays" section for details.
 
 
 ## Usage
@@ -53,21 +52,21 @@ To create a serializable dictionary of type `<string, string>`:
 ### Dictionary of lists example 
 
 To create a serializable dictionary of type `<string, List<Color>>`:
-- Create a `SerializableListDictionary.Storage` subclass for the type contained in the list
+- Create a `SerializableDictionary.Storage` subclass to hold the list
     ```csharp
     [Serializable]
-    public class ColorListStorage : SerializableListDictionary.Storage<Color> {}
+    public class ColorListStorage : SerializableDictionary.Storage<List<Color>> {}
     ```
 - Create a `ListStoragePropertyDrawer` subclass in an editor folder or use an existing one.
 - Add a `CustomPropertyDrawer` attribute to this class. 
     ```csharp
     [CustomPropertyDrawer(typeof(ColorListStorage))]
-    public class AnyListStoragePropertyDrawer : ListStoragePropertyDrawer {}
+    public class AnySerializableDictionaryStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer {}
     ```
--  Create a `SerializableListDictionary` subclass using the type of the key, the type contained in the value list and the previous subclass
+-  Create a `SerializableDictionary` subclass using the previous subclass
     ```csharp
     [Serializable]
-    public class StringColorListDictionary : SerializableListDictionary<string, Color, ColorListStorage> {}
+    public class StringColorListDictionary : SerializableDictionary<string, List<Color>, ColorListStorage> {}
     ```
 - Create a `SerializableDictionaryPropertyDrawer` subclass in an editor folder or use an existing one.
 - Add a `CustomPropertyDrawer` attribute to this class. 
@@ -75,13 +74,7 @@ To create a serializable dictionary of type `<string, List<Color>>`:
     [CustomPropertyDrawer(typeof(StringColorListDictionary))]
     public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
     ```
-- The attributes for all the `SerializableDictionary` subclasses can be added to the same `SerializableDictionaryPropertyDrawer` subclass.
 - Use `StringColorListDictionary` in your scripts as a normal `IDictionary<string, List<Color>>` type
-
-
-### Dictionary of arrays example 
-
-See the list example but use `SerializableArrayDictionary` instead of `SerializableListDictionary`. You can use the same `ListStoragePropertyDrawer` subclass.
 
 
 ## Details
@@ -157,46 +150,40 @@ Because unity cannot serialize a array of lists or an array of arrays, using a `
 
 It is necessary to create an intermediate class that will contain the list or array. This class can then be contained in an array and be serialized by Unity.
 
-Create a class that inherits from `SerializableArrayDictionary.Storage<TValue>` if you want to create a dictionary of arrays (`SerializableDictionary<TKey, TValue[]>`) or from `SerializableListDictionary.Storage<TValue>` for a dictionary of lists (`SerializableDictionary<TKey, List<TValue>>`). These storage classes only contain the `TValue[] list` or the `List<TValue> list` field.
+Create a class that inherits from `SerializableDictionary.Storage<List<TValue>`. This storage class will only contain a `List<TValue> data` field.
 
 ```csharp
 [Serializable]
-public class ColorListStorage : SerializableListDictionary.Storage<Color> {}
+public class ColorListStorage : SerializableDictionary.Storage<List<Color>> {}
 ```
 
-If you use this storage class directly with SerializableDictionary, you will have to access the list or array through the `.list` field of the `Storage` class because your dictionary will inherit from `Dictionary<TKey, Storage<TValue>>` instead of `Dictionary<TKey, TValue[]>`. This is far from ideal.
+If you use this storage class directly with SerializableDictionary, you will have to access the list or array through the `.data` field of the `Storage` class because your dictionary will inherit from `Dictionary<TKey, Storage<TValue>>` instead of `Dictionary<TKey, List<TValue>>`. This is far from ideal.
 
 ```csharp
-// non optimal example for a dictionary of color array
+// non optimal example for a dictionary of color list
 [Serializable]
-public class ColorListStorage : SerializableListDictionary.Storage<Color> {}
+public class ColorListStorage : SerializableDictionary.Storage<List<Color>> {}
 [Serializable]
 public class StringColorListDictionary : SerializableDictionary<string, ColorListStorage> {}
 
 public StringColorListDictionary m_colorStringListDict;
 
-// you would have to access the color array through the .list field of ColorListStorage
-List<Color> colorList = m_colorStringListDict[key].list;
+// you would have to access the color list through the .data field of ColorListStorage
+List<Color> colorList = m_colorStringListDict[key].data;
 ```
 
-To access the lists directly, use the special `SerializableListDictionary<TKey, TListValueElement, TListStorage>` class.
-- `TKey` is the type of the keys as usual.
-- `TListValueElement` is the type contained in the list, `TValue` for a dictionary of `List<TValue>`. 
-- `TListStorage` is the storage class holding the list, a class inheriting from `SerializableListDictionary.Storage<TValue>` for a dictionary of `List<TValue>`.
+To access the lists directly, use the special 3 arguments `SerializableDictionary<TKey, TValue, TValueStorage>` class where `TValueStorage` is the class previously created.
 
-This is similar for the arrays. Use the special `SerializableArrayDictionary<TKey, TArrayValueElement, TArrayStorage>` class.
-- `TArrayValueElement` is the type contained in the array, `TValue` for a dictionary of `TValue[]`. 
-- `TArrayStorage` is the storage class holding the array, a class inheriting from `SerializableArrayDictionary.Storage<TValue>` for a dictionary of `TValue[]`.
 
 ```csharp
 [Serializable]
-public class ColorListStorage : SerializableListDictionary.Storage<Color> {}
+public class ColorListStorage : SerializableDictionary.Storage<List<Color>> {}
 [Serializable]
-public class StringColorListDictionary : SerializableListDictionary<string, Color, ColorListStorage> {}
+public class StringColorListDictionary : SerializableDictionary<string, List<Color>, ColorListStorage> {}
 
 public StringColorListDictionary m_colorStringListDict;
 
-// you can now access directly the color array
+// you can now access directly the color list
 List<Color> colorList = m_colorStringListDict[key];
 ```
 
@@ -207,10 +194,9 @@ You have to declare the property drawer for the dictionaries the same way as the
 public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
 ```
 
-You also have to declare a property drawer for the storage classes in order to hide the intermediate `.list` field. Both `SerializableArrayDictionary.Storage` and `SerializableListDictionary.Storage` use `ListStoragePropertyDrawer` as property drawer.
+You also have to declare a property drawer for the storage classes in order to hide the intermediate `.data` field in the inspector.
 
 ```csharp
-[CustomPropertyDrawer(typeof(ColorArrayStorage))]
 [CustomPropertyDrawer(typeof(ColorListStorage))]
-public class AnyListStoragePropertyDrawer : ListStoragePropertyDrawer {}
+public class AnySerializableDictionaryStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer {}
 ```

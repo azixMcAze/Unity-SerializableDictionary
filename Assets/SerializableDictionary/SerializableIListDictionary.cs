@@ -11,66 +11,26 @@ public static class SerializableIlistDictionary
 	}
 }
 
-public class SerializableIListDictionary<TKey, TListValue, TListValueElement, TListStorage> : Dictionary<TKey, TListValue>, ISerializationCallbackReceiver where TListValue : IList<TListValueElement> where TListStorage : SerializableIlistDictionary.Storage<TListValue, TListValueElement>, new()
+public class SerializableIListDictionary<TKey, TListValue, TListValueElement, TListStorage> : SerializableDictionaryBase<TKey, TListValue, TListStorage> where TListValue : IList<TListValueElement> where TListStorage : SerializableIlistDictionary.Storage<TListValue, TListValueElement>, new()
 {
-	[SerializeField]
-	TKey[] m_keys;
-	[SerializeField]
-	TListStorage[] m_values;
-
 	public SerializableIListDictionary()
 	{
 	}
 
-	public SerializableIListDictionary(IDictionary<TKey, TListValue> dict) : base(dict.Count)
+	public SerializableIListDictionary(IDictionary<TKey, TListValue> dict) : base(dict)
 	{
-		foreach (var kvp in dict)
-		{
-			this[kvp.Key] = kvp.Value;
-		}
 	}
 
-	public void CopyFrom(IDictionary<TKey, TListValue> dict)
-	{
-		this.Clear();
-		foreach (var kvp in dict)
-		{
-			this[kvp.Key] = kvp.Value;
-		}
-	}
+    protected override TListValue GetValue(TListStorage storage)
+    {
+		return storage.list;
+    }
 
-	public void OnAfterDeserialize()
-	{
-		if(m_keys != null && m_values != null && m_keys.Length == m_values.Length)
-		{
-			this.Clear();
-			int n = m_keys.Length;
-			for(int i = 0; i < n; ++i)
-			{
-				this[m_keys[i]] = m_values[i].list;
-			}
-
-			m_keys = null;
-			m_values = null;
-		}
-
-	}
-
-	public void OnBeforeSerialize()
-	{
-		int n = this.Count;
-		m_keys = new TKey[n];
-		m_values = new TListStorage[n];
-
-		int i = 0;
-		foreach(var kvp in this)
-		{
-			m_keys[i] = kvp.Key;
-			m_values[i] = new TListStorage();
-			m_values[i].list = kvp.Value;
-			++i;
-		}
-	}
+    protected override void StoreValue(ref TListStorage storage, TListValue value)
+    {
+        storage = new TListStorage();
+        storage.list = value;
+    }
 }
 
 public static class SerializableArrayDictionary

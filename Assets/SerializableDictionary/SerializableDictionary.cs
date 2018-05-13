@@ -91,54 +91,32 @@ public class SerializableDictionary<TKey, TValue> : SerializableDictionaryBase<T
 	}
 }
 
-public static class SerializableIlistDictionary
+public static class SerializableDictionary
 {
-	public class Storage<TList, TListElement> where TList : IList<TListElement>
+	public class Storage<T>
 	{
-		public TList list;
+		public T data;
 	}
 }
 
-public class SerializableIListDictionary<TKey, TListValue, TListValueElement, TListStorage> : SerializableDictionaryBase<TKey, TListValue, TListStorage> where TListValue : IList<TListValueElement> where TListStorage : SerializableIlistDictionary.Storage<TListValue, TListValueElement>, new()
+public class SerializableDictionary<TKey, TValue, TValueStorage> : SerializableDictionaryBase<TKey, TValue, TValueStorage> where TValueStorage : SerializableDictionary.Storage<TValue>, new()
 {
-	public SerializableIListDictionary()
+	public SerializableDictionary()
 	{
 	}
 
-	public SerializableIListDictionary(IDictionary<TKey, TListValue> dict) : base(dict)
+	public SerializableDictionary(IDictionary<TKey, TValue> dict) : base(dict)
 	{
 	}
 
-    protected override TListValue GetValue(TListStorage[] storage, int i)
+    protected override TValue GetValue(TValueStorage[] storage, int i)
     {
-		return storage[i].list;
+		return storage[i].data;
     }
 
-    protected override void SetValue(TListStorage[] storage, int i, TListValue value)
+    protected override void SetValue(TValueStorage[] storage, int i, TValue value)
     {
-        storage[i] = new TListStorage();
-        storage[i].list = value;
+        storage[i] = new TValueStorage();
+        storage[i].data = value;
     }
-}
-
-public static class SerializableArrayDictionary
-{
-	public class Storage<T> : SerializableIlistDictionary.Storage<T[], T>
-	{
-	}
-}
-
-public class SerializableArrayDictionary<TKey, TArrayValueElement, TArrayStorage> : SerializableIListDictionary<TKey, TArrayValueElement[], TArrayValueElement, TArrayStorage> where TArrayStorage : SerializableArrayDictionary.Storage<TArrayValueElement>, new()
-{
-}
-
-public static class SerializableListDictionary
-{
-	public class Storage<T> : SerializableIlistDictionary.Storage<List<T>, T>
-	{
-	}
-}
-
-public class SerializableListDictionary<TKey, TListValueElement, TListStorage> : SerializableIListDictionary<TKey, List<TListValueElement>, TListValueElement, TListStorage> where TListStorage : SerializableListDictionary.Storage<TListValueElement>, new()
-{
 }

@@ -11,9 +11,6 @@ public abstract class SerializableDictionaryBase<TKey, TValue, TValueStorage> : 
 	[SerializeField]
 	TValueStorage[] m_values;
 
-	protected abstract void SetValue(TValueStorage[] storage, int i, TValue value);
-	protected abstract TValue GetValue(TValueStorage[] storage, int i);
-
 	public SerializableDictionaryBase()
 	{
 	}
@@ -27,6 +24,9 @@ public abstract class SerializableDictionaryBase<TKey, TValue, TValueStorage> : 
 	}
 	
 	protected SerializableDictionaryBase(SerializationInfo info, StreamingContext context) : base(info,context){}
+
+	protected abstract void SetValue(TValueStorage[] storage, int i, TValue value);
+	protected abstract TValue GetValue(TValueStorage[] storage, int i);
 
 	public void CopyFrom(IDictionary<TKey, TValue> dict)
 	{
@@ -72,16 +72,6 @@ public abstract class SerializableDictionaryBase<TKey, TValue, TValueStorage> : 
 
 public class SerializableDictionary<TKey, TValue> : SerializableDictionaryBase<TKey, TValue, TValue>
 {
-    protected override TValue GetValue(TValue[] storage, int i)
-    {
-        return storage[i];
-    }
-
-    protected override void SetValue(TValue[] storage, int i, TValue value)
-    {
-        storage[i] = value;
-    }
-
 	public SerializableDictionary()
 	{
 	}
@@ -91,6 +81,16 @@ public class SerializableDictionary<TKey, TValue> : SerializableDictionaryBase<T
 	}
 
 	protected SerializableDictionary(SerializationInfo info, StreamingContext context) : base(info,context){}
+
+    protected override TValue GetValue(TValue[] storage, int i)
+    {
+        return storage[i];
+    }
+
+    protected override void SetValue(TValue[] storage, int i, TValue value)
+    {
+        storage[i] = value;
+    }
 }
 
 public static class SerializableDictionary

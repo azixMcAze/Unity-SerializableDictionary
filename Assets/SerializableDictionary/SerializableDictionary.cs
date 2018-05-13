@@ -89,6 +89,8 @@ public class SerializableDictionary<TKey, TValue> : SerializableDictionaryBase<T
 	public SerializableDictionary(IDictionary<TKey, TValue> dict) : base(dict)
 	{
 	}
+
+	protected SerializableDictionary(SerializationInfo info, StreamingContext context) : base(info,context){}
 }
 
 public static class SerializableDictionary
@@ -108,6 +110,8 @@ public class SerializableDictionary<TKey, TValue, TValueStorage> : SerializableD
 	public SerializableDictionary(IDictionary<TKey, TValue> dict) : base(dict)
 	{
 	}
+
+	protected SerializableDictionary(SerializationInfo info, StreamingContext context) : base(info,context){}
 
     protected override TValue GetValue(TValueStorage[] storage, int i)
     {

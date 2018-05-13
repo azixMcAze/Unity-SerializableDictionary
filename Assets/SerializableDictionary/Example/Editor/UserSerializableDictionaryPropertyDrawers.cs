@@ -9,4 +9,4 @@ using UnityEditor;
 public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
 
 [CustomPropertyDrawer(typeof(ColorArrayStorage))]
-public class AnyListStoragePropertyDrawer : ListStoragePropertyDrawer {}
+public class AnySerializableDictionaryStoragePropertyDrawer: SerializableDictionaryStoragePropertyDrawer {}

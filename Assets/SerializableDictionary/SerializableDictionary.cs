@@ -82,15 +82,15 @@ public class SerializableDictionary<TKey, TValue> : SerializableDictionaryBase<T
 
 	protected SerializableDictionary(SerializationInfo info, StreamingContext context) : base(info,context){}
 
-    protected override TValue GetValue(TValue[] storage, int i)
-    {
-        return storage[i];
-    }
+	protected override TValue GetValue(TValue[] storage, int i)
+	{
+		return storage[i];
+	}
 
-    protected override void SetValue(TValue[] storage, int i, TValue value)
-    {
-        storage[i] = value;
-    }
+	protected override void SetValue(TValue[] storage, int i, TValue value)
+	{
+		storage[i] = value;
+	}
 }
 
 public static class SerializableDictionary
@@ -113,14 +113,14 @@ public class SerializableDictionary<TKey, TValue, TValueStorage> : SerializableD
 
 	protected SerializableDictionary(SerializationInfo info, StreamingContext context) : base(info,context){}
 
-    protected override TValue GetValue(TValueStorage[] storage, int i)
-    {
+	protected override TValue GetValue(TValueStorage[] storage, int i)
+	{
 		return storage[i].data;
-    }
+	}
 
-    protected override void SetValue(TValueStorage[] storage, int i, TValue value)
-    {
-        storage[i] = new TValueStorage();
-        storage[i].data = value;
-    }
+	protected override void SetValue(TValueStorage[] storage, int i, TValue value)
+	{
+		storage[i] = new TValueStorage();
+		storage[i].data = value;
+	}
 }

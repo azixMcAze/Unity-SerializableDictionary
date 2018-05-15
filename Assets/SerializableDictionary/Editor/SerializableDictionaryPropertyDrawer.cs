@@ -5,6 +5,7 @@ using UnityEditor;
 using System.Reflection;
 using System;
 
+[CustomPropertyDrawer(typeof(SerializableDictionary), true)]
 public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 {
 	const string KeysFieldName = "m_keys";
@@ -549,6 +550,7 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 	}
 }
 
+[CustomPropertyDrawer(typeof(SerializableDictionary.Storage), true)]
 public class SerializableDictionaryStoragePropertyDrawer : PropertyDrawer
 {
 	public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

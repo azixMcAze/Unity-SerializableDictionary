@@ -41,11 +41,6 @@ public abstract class SerializableDictionaryBase<TKey, TValue, TValueStorage> : 
 		}
 	}
 
-	protected SerializableDictionaryBase(SerializationInfo info, StreamingContext context) 
-	{
-		m_dict = new Dictionary<TKey, TValue>(info, context);
-	}
-
 	protected abstract void SetValue(TValueStorage[] storage, int i, TValue value);
 	protected abstract TValue GetValue(TValueStorage[] storage, int i);
 
@@ -216,6 +211,11 @@ public abstract class SerializableDictionaryBase<TKey, TValue, TValueStorage> : 
 	#endregion
 
 	#region ISerializable
+
+	protected SerializableDictionaryBase(SerializationInfo info, StreamingContext context) 
+	{
+		m_dict = new Dictionary<TKey, TValue>(info, context);
+	}
 
 	public void GetObjectData(SerializationInfo info, StreamingContext context)
 	{

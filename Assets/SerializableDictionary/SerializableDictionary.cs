@@ -9,6 +9,13 @@ public abstract class SerializableDictionaryBase
 	public abstract class Storage
 	{
 	}
+
+	protected class Dictionary<TKey, TValue> : System.Collections.Generic.Dictionary<TKey, TValue>
+	{
+		public Dictionary() {}
+		public Dictionary(int capacity) : base(capacity) {}
+		public Dictionary(SerializationInfo info, StreamingContext context) : base(info, context) {}
+	}
 }
 
 [Serializable]
@@ -26,18 +33,18 @@ public abstract class SerializableDictionaryBase<TKey, TValue, TValueStorage> : 
 	}
 
 	public SerializableDictionaryBase(IDictionary<TKey, TValue> dict)
-	{
+	{	
 		m_dict = new Dictionary<TKey, TValue>(dict.Count);
 		foreach (var kvp in dict)
 		{
 			this[kvp.Key] = kvp.Value;
 		}
 	}
-	
-	// protected SerializableDictionaryBase(SerializationInfo info, StreamingContext context) 
-	// {
-	// 	m_dict = new Dictionary<TKey, TValue>(info,context);
-	// }
+
+	protected SerializableDictionaryBase(SerializationInfo info, StreamingContext context) 
+	{
+		m_dict = new Dictionary<TKey, TValue>(info, context);
+	}
 
 	protected abstract void SetValue(TValueStorage[] storage, int i, TValue value);
 	protected abstract TValue GetValue(TValueStorage[] storage, int i);
@@ -236,7 +243,7 @@ public class SerializableDictionary<TKey, TValue> : SerializableDictionaryBase<T
 	{
 	}
 
-	// protected SerializableDictionary(SerializationInfo info, StreamingContext context) : base(info,context){}
+	protected SerializableDictionary(SerializationInfo info, StreamingContext context) : base(info,context){}
 
 	protected override TValue GetValue(TValue[] storage, int i)
 	{
@@ -259,7 +266,7 @@ public class SerializableDictionary<TKey, TValue, TValueStorage> : SerializableD
 	{
 	}
 
-	// protected SerializableDictionary(SerializationInfo info, StreamingContext context) : base(info,context){}
+	protected SerializableDictionary(SerializationInfo info, StreamingContext context) : base(info,context){}
 
 	protected override TValue GetValue(TValueStorage[] storage, int i)
 	{

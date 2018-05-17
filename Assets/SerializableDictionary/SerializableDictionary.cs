@@ -11,7 +11,7 @@ public abstract class SerializableDictionaryBase
 	protected class Dictionary<TKey, TValue> : System.Collections.Generic.Dictionary<TKey, TValue>
 	{
 		public Dictionary() {}
-		public Dictionary(int capacity) : base(capacity) {}
+		public Dictionary(IDictionary<TKey, TValue> dict) : base(dict) {}
 		public Dictionary(SerializationInfo info, StreamingContext context) : base(info, context) {}
 	}
 }
@@ -32,11 +32,7 @@ public abstract class SerializableDictionaryBase<TKey, TValue, TValueStorage> : 
 
 	public SerializableDictionaryBase(IDictionary<TKey, TValue> dict)
 	{	
-		m_dict = new Dictionary<TKey, TValue>(dict.Count);
-		foreach (var kvp in dict)
-		{
-			this[kvp.Key] = kvp.Value;
-		}
+		m_dict = new Dictionary<TKey, TValue>(dict);
 	}
 
 	protected abstract void SetValue(TValueStorage[] storage, int i, TValue value);

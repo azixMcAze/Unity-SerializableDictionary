@@ -39,13 +39,6 @@ To create a serializable dictionary of type `<string, string>`:
     [Serializable]
     public class StringStringDictionary : SerializableDictionary<string, string> {}
     ```
-- Create a `SerializableDictionaryPropertyDrawer` subclass in an editor folder or use an existing one.
-- Add a `CustomPropertyDrawer` attribute to this class.
-    ```csharp
-    [CustomPropertyDrawer(typeof(StringStringDictionary))]
-    public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
-    ```
-- The attributes for all the `SerializableDictionary` subclasses can be added to the same `SerializableDictionaryPropertyDrawer` subclass.
 - Use `StringStringDictionary` in your scripts as a normal `IDictionary<string, string>` type
 
 
@@ -57,22 +50,11 @@ To create a serializable dictionary of type `<string, List<Color>>`:
     [Serializable]
     public class ColorListStorage : SerializableDictionary.Storage<List<Color>> {}
     ```
-- Create a `ListStoragePropertyDrawer` subclass in an editor folder or use an existing one.
-- Add a `CustomPropertyDrawer` attribute to this class. 
-    ```csharp
-    [CustomPropertyDrawer(typeof(ColorListStorage))]
-    public class AnySerializableDictionaryStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer {}
-    ```
+
 -  Create a `SerializableDictionary` subclass using the previous subclass
     ```csharp
     [Serializable]
     public class StringColorListDictionary : SerializableDictionary<string, List<Color>, ColorListStorage> {}
-    ```
-- Create a `SerializableDictionaryPropertyDrawer` subclass in an editor folder or use an existing one.
-- Add a `CustomPropertyDrawer` attribute to this class. 
-    ```csharp
-    [CustomPropertyDrawer(typeof(StringColorListDictionary))]
-    public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
     ```
 - Use `StringColorListDictionary` in your scripts as a normal `IDictionary<string, List<Color>>` type
 
@@ -101,19 +83,6 @@ public class MyClass
 public class StringMyClassDictionary : SerializableDictionary<string, MyClass> {}
 ```
 
-
-
-Declare the custom property drawer for these new types by adding the `CustomPropertyDrawer` attribute to one of the `SerializableDictionaryPropertyDrawer` derived classes.
-
-```csharp
-[CustomPropertyDrawer(typeof(StringStringDictionary))]
-[CustomPropertyDrawer(typeof(MyScriptColorDictionary))]
-[CustomPropertyDrawer(typeof(StringMyClassDictionary))]
-public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
-```
-
-It is recommended to create one derived class in a separate file and add the attributes to this class instead of modifying the original `SerializableDictionaryPropertyDrawer` class.
-You can use the same class for all your `SerializableDictionary` specializations, there is no need to create a new one for each specialization.
 
 Add the dictionaries to your scripts and access them directly of through a property.
 The dictionaries can be accessed through a property of type `IDictionary<TKey, TValue>` for better encapsulation.
@@ -185,18 +154,4 @@ public StringColorListDictionary m_colorStringListDict;
 
 // you can now access directly the color list
 List<Color> colorList = m_colorStringListDict[key];
-```
-
-You have to declare the property drawer for the dictionaries the same way as the classic serializable dictionaries.
-
-```csharp
-[CustomPropertyDrawer(typeof(StringColorListDictionary))]
-public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
-```
-
-You also have to declare a property drawer for the storage classes in order to hide the intermediate `.data` field in the inspector.
-
-```csharp
-[CustomPropertyDrawer(typeof(ColorListStorage))]
-public class AnySerializableDictionaryStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer {}
 ```

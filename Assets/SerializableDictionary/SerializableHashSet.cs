@@ -17,26 +17,23 @@ public abstract class SerializableHashSetBase
 }
 
 [Serializable]
-public abstract class SerializableHashSetBase<TValue, TValueStorage> : SerializableHashSetBase, ISet<TValue>, ISerializationCallbackReceiver, IDeserializationCallback, ISerializable
+public abstract class SerializableHashSet<T> : SerializableHashSetBase, ISet<T>, ISerializationCallbackReceiver, IDeserializationCallback, ISerializable
 {
-	HashSet<TValue> m_hashSet;
+	HashSet<T> m_hashSet;
 	[SerializeField]
-	TValueStorage[] m_values;
+	T[] m_keys;
 
-	public SerializableHashSetBase()
+	public SerializableHashSet()
 	{
-		m_hashSet = new HashSet<TValue>();
+		m_hashSet = new HashSet<T>();
 	}
 
-	public SerializableHashSetBase(ISet<TValue> set)
+	public SerializableHashSet(ISet<T> set)
 	{	
-		m_hashSet = new HashSet<TValue>(set);
+		m_hashSet = new HashSet<T>(set);
 	}
 
-	protected abstract void SetValue(TValueStorage[] storage, int i, TValue value);
-	protected abstract TValue GetValue(TValueStorage[] storage, int i);
-
-	public void CopyFrom(ISet<TValue> set)
+	public void CopyFrom(ISet<T> set)
 	{
 		m_hashSet.Clear();
 		foreach (var value in set)
@@ -47,125 +44,125 @@ public abstract class SerializableHashSetBase<TValue, TValueStorage> : Serializa
 
 	public void OnAfterDeserialize()
 	{
-		if(m_values != null)
+		if(m_keys != null)
 		{
 			m_hashSet.Clear();
-			int n = m_values.Length;
+			int n = m_keys.Length;
 			for(int i = 0; i < n; ++i)
 			{
-				m_hashSet.Add(GetValue(m_values, i));
+				m_hashSet.Add(m_keys[i]);
 			}
 
-			m_values = null;
+			m_keys = null;
 		}
 	}
 
 	public void OnBeforeSerialize()
 	{
 		int n = m_hashSet.Count;
-		m_values = new TValueStorage[n];
+		m_keys = new T[n];
 
 		int i = 0;
 		foreach(var value in m_hashSet)
 		{
-			SetValue(m_values, i, value);
+			m_keys[i] = value;
 			++i;
 		}
 	}
 
     #region ISet<TValue>
 
-    public int Count => ((ISet<TValue>)m_hashSet).Count;
-    public bool IsReadOnly => ((ISet<TValue>)m_hashSet).IsReadOnly;
+    public int Count => ((ISet<T>)m_hashSet).Count;
+    public bool IsReadOnly => ((ISet<T>)m_hashSet).IsReadOnly;
 
-    public bool Add(TValue item)
+    public bool Add(T item)
     {
-        return ((ISet<TValue>)m_hashSet).Add(item);
+        return ((ISet<T>)m_hashSet).Add(item);
     }
 
-    public void ExceptWith(IEnumerable<TValue> other)
+    public void ExceptWith(IEnumerable<T> other)
     {
-        ((ISet<TValue>)m_hashSet).ExceptWith(other);
+        ((ISet<T>)m_hashSet).ExceptWith(other);
     }
 
-    public void IntersectWith(IEnumerable<TValue> other)
+    public void IntersectWith(IEnumerable<T> other)
     {
-        ((ISet<TValue>)m_hashSet).IntersectWith(other);
+        ((ISet<T>)m_hashSet).IntersectWith(other);
     }
 
-    public bool IsProperSubsetOf(IEnumerable<TValue> other)
+    public bool IsProperSubsetOf(IEnumerable<T> other)
     {
-        return ((ISet<TValue>)m_hashSet).IsProperSubsetOf(other);
+        return ((ISet<T>)m_hashSet).IsProperSubsetOf(other);
     }
 
-    public bool IsProperSupersetOf(IEnumerable<TValue> other)
+    public bool IsProperSupersetOf(IEnumerable<T> other)
     {
-        return ((ISet<TValue>)m_hashSet).IsProperSupersetOf(other);
+        return ((ISet<T>)m_hashSet).IsProperSupersetOf(other);
     }
 
-    public bool IsSubsetOf(IEnumerable<TValue> other)
+    public bool IsSubsetOf(IEnumerable<T> other)
     {
-        return ((ISet<TValue>)m_hashSet).IsSubsetOf(other);
+        return ((ISet<T>)m_hashSet).IsSubsetOf(other);
     }
 
-    public bool IsSupersetOf(IEnumerable<TValue> other)
+    public bool IsSupersetOf(IEnumerable<T> other)
     {
-        return ((ISet<TValue>)m_hashSet).IsSupersetOf(other);
+        return ((ISet<T>)m_hashSet).IsSupersetOf(other);
     }
 
-    public bool Overlaps(IEnumerable<TValue> other)
+    public bool Overlaps(IEnumerable<T> other)
     {
-        return ((ISet<TValue>)m_hashSet).Overlaps(other);
+        return ((ISet<T>)m_hashSet).Overlaps(other);
     }
 
-    public bool SetEquals(IEnumerable<TValue> other)
+    public bool SetEquals(IEnumerable<T> other)
     {
-        return ((ISet<TValue>)m_hashSet).SetEquals(other);
+        return ((ISet<T>)m_hashSet).SetEquals(other);
     }
 
-    public void SymmetricExceptWith(IEnumerable<TValue> other)
+    public void SymmetricExceptWith(IEnumerable<T> other)
     {
-        ((ISet<TValue>)m_hashSet).SymmetricExceptWith(other);
+        ((ISet<T>)m_hashSet).SymmetricExceptWith(other);
     }
 
-    public void UnionWith(IEnumerable<TValue> other)
+    public void UnionWith(IEnumerable<T> other)
     {
-        ((ISet<TValue>)m_hashSet).UnionWith(other);
+        ((ISet<T>)m_hashSet).UnionWith(other);
     }
 
-    void ICollection<TValue>.Add(TValue item)
+    void ICollection<T>.Add(T item)
     {
-        ((ISet<TValue>)m_hashSet).Add(item);
+        ((ISet<T>)m_hashSet).Add(item);
     }
 
     public void Clear()
     {
-        ((ISet<TValue>)m_hashSet).Clear();
+        ((ISet<T>)m_hashSet).Clear();
     }
 
-    public bool Contains(TValue item)
+    public bool Contains(T item)
     {
-        return ((ISet<TValue>)m_hashSet).Contains(item);
+        return ((ISet<T>)m_hashSet).Contains(item);
     }
 
-    public void CopyTo(TValue[] array, int arrayIndex)
+    public void CopyTo(T[] array, int arrayIndex)
     {
-        ((ISet<TValue>)m_hashSet).CopyTo(array, arrayIndex);
+        ((ISet<T>)m_hashSet).CopyTo(array, arrayIndex);
     }
 
-    public bool Remove(TValue item)
+    public bool Remove(T item)
     {
-        return ((ISet<TValue>)m_hashSet).Remove(item);
+        return ((ISet<T>)m_hashSet).Remove(item);
     }
 
-    public IEnumerator<TValue> GetEnumerator()
+    public IEnumerator<T> GetEnumerator()
     {
-        return ((ISet<TValue>)m_hashSet).GetEnumerator();
+        return ((ISet<T>)m_hashSet).GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        return ((ISet<TValue>)m_hashSet).GetEnumerator();
+        return ((ISet<T>)m_hashSet).GetEnumerator();
     }
 
     #endregion
@@ -181,9 +178,9 @@ public abstract class SerializableHashSetBase<TValue, TValueStorage> : Serializa
 
 	#region ISerializable
 
-	protected SerializableHashSetBase(SerializationInfo info, StreamingContext context) 
+	protected SerializableHashSet(SerializationInfo info, StreamingContext context) 
 	{
-		m_hashSet = new HashSet<TValue>(info, context);
+		m_hashSet = new HashSet<T>(info, context);
 	}
 
 	public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -192,47 +189,4 @@ public abstract class SerializableHashSetBase<TValue, TValueStorage> : Serializa
 	}
 
     #endregion
-}
-
-public static class SerializableHashSet
-{
-	public class Storage<T> : SerializableHashSetBase.Storage
-	{
-		public T data;
-	}
-}
-
-public class SerializableHashSet<TValue> : SerializableHashSetBase<TValue, TValue>
-{
-	public SerializableHashSet() {}
-	public SerializableHashSet(ISet<TValue> set) : base(set) {}
-	protected SerializableHashSet(SerializationInfo info, StreamingContext context) : base(info, context) {}
-
-	protected override TValue GetValue(TValue[] storage, int i)
-	{
-		return storage[i];
-	}
-
-	protected override void SetValue(TValue[] storage, int i, TValue value)
-	{
-		storage[i] = value;
-	}
-}
-
-public class SerializableHashSet<TValue, TValueStorage> : SerializableHashSetBase<TValue, TValueStorage> where TValueStorage : SerializableHashSet.Storage<TValue>, new()
-{
-	public SerializableHashSet() {}
-	public SerializableHashSet(ISet<TValue> set) : base(set) {}
-	protected SerializableHashSet(SerializationInfo info, StreamingContext context) : base(info, context) {}
-
-	protected override TValue GetValue(TValueStorage[] storage, int i)
-	{
-		return storage[i].data;
-	}
-
-	protected override void SetValue(TValueStorage[] storage, int i, TValue value)
-	{
-		storage[i] = new TValueStorage();
-		storage[i].data = value;
-	}
 }

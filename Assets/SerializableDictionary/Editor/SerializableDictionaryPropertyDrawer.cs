@@ -216,9 +216,10 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 
 	static float DrawKeyValueLine(SerializedProperty keyProperty, SerializedProperty valueProperty, Rect linePosition, int index)
 	{
+		bool keyCanBeExpanded = CanPropertyBeExpanded(keyProperty);
+
 		if(valueProperty != null)
 		{
-			bool keyCanBeExpanded = CanPropertyBeExpanded(keyProperty);
 			bool valueCanBeExpanded = CanPropertyBeExpanded(valueProperty);
 
 			if(!keyCanBeExpanded && valueCanBeExpanded)
@@ -234,7 +235,15 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		}
 		else
 		{
-			return DrawKeyLine(keyProperty, linePosition);
+			if(!keyCanBeExpanded)
+			{
+				return DrawKeyLine(keyProperty, linePosition, null);
+			}
+			else
+			{
+				var keyLabel = string.Format("{0} {1}", ObjectNames.NicifyVariableName(keyProperty.type), index);
+				return DrawKeyLine(keyProperty, linePosition, keyLabel);
+			}
 		}
 	}
 
@@ -284,13 +293,15 @@ public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 		return Mathf.Max(keyPropertyHeight, valuePropertyHeight);
 	}
 
-	static float DrawKeyLine(SerializedProperty keyProperty, Rect linePosition)
+	static float DrawKeyLine(SerializedProperty keyProperty, Rect linePosition, string keyLabel)
 	{
 		float keyPropertyHeight = EditorGUI.GetPropertyHeight(keyProperty);
 		var keyPosition = linePosition;
 		keyPosition.height = keyPropertyHeight;
 		keyPosition.width = linePosition.width;
-		EditorGUI.PropertyField(keyPosition, keyProperty, GUIContent.none, true);
+
+		var keyLabelContent = keyLabel != null ? TempContent(keyLabel) : GUIContent.none;
+		EditorGUI.PropertyField(keyPosition, keyProperty, keyLabelContent, true);
 
 		return keyPropertyHeight;
 	}

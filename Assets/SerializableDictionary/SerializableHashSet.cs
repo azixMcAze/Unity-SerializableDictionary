@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NET_4_6 || NET_STANDARD_2_0
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -72,8 +73,8 @@ public abstract class SerializableHashSet<T> : SerializableHashSetBase, ISet<T>,
 
     #region ISet<TValue>
 
-    public int Count => ((ISet<T>)m_hashSet).Count;
-    public bool IsReadOnly => ((ISet<T>)m_hashSet).IsReadOnly;
+    public int Count { get { return ((ISet<T>)m_hashSet).Count; } }
+    public bool IsReadOnly { get { return  ((ISet<T>)m_hashSet).IsReadOnly; } }
 
     public bool Add(T item)
     {
@@ -190,3 +191,4 @@ public abstract class SerializableHashSet<T> : SerializableHashSetBase, ISet<T>,
 
     #endregion
 }
+#endif

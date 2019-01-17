@@ -6,7 +6,9 @@ using System.Reflection;
 using System;
 
 [CustomPropertyDrawer(typeof(SerializableDictionaryBase), true)]
+#if NET_4_6 || NET_STANDARD_2_0
 [CustomPropertyDrawer(typeof(SerializableHashSetBase), true)]
+#endif
 public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 {
 	const string KeysFieldName = "m_keys";

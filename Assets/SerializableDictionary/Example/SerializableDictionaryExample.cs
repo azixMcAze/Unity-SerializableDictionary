@@ -14,6 +14,9 @@ public class SerializableDictionaryExample : MonoBehaviour {
 
 	public ObjectColorDictionary m_objectColorDictionary;
 	public StringColorArrayDictionary m_stringColorArrayDictionary;
+	#if NET_4_6 || NET_STANDARD_2_0
+	public StringHashSet m_stringHashSet;
+	#endif
 
 	void Reset ()
 	{

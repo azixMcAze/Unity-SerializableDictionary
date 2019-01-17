@@ -24,3 +24,8 @@ public class MyClass
 
 [Serializable]
 public class QuaternionMyClassDictionary : SerializableDictionary<Quaternion, MyClass> {}
+
+#if NET_4_6 || NET_STANDARD_2_0
+[Serializable]
+public class StringHashSet : SerializableHashSet<string> {}
+#endif

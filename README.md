@@ -7,7 +7,7 @@ and construct the dictionary at startup.
 
 This project provides a generic dictionary class and its custom property drawer that solves this problem.
 
-![General screenshot](docs/SerializableDictionary_screenshot1.png)
+![General screenshot](Documentation~/Example/Images/SerializableDictionary_screenshot1.png)
 
 ## Features
 
@@ -17,9 +17,9 @@ This project provides a generic dictionary class and its custom property drawer 
 - It can be edited in the inspector without having to implement custom editors or property drawers.
 - The inspector will handle invalid dictionary keys such as duplicated or `null` keys and warn the user that data loss can occur if the keys are not fixed.
     
-    ![Conflicting keys screenshot](docs/SerializableDictionary_screenshot2.png)
+    ![Conflicting keys screenshot](Documentation~/Example/Images/SerializableDictionary_screenshot2.png)
 
-    ![Null key screenshot](docs/SerializableDictionary_screenshot3.png)
+    ![Null key screenshot](Documentation~/Example/Images/SerializableDictionary_screenshot3.png)
 
 
 ## Limitations

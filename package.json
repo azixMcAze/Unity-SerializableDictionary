@@ -1,0 +1,16 @@
+{
+  "name": "com.mathieu_le_ber.serializabledictionary",
+  "version": "1.0.0",
+  "displayName": "SerializableDictionary",
+  "description": "A serializable dictionary class for Unity.",
+  "unity": "2018.1",
+  "unityRelease": "0f2",
+  "keywords": [
+    "Serializable Dictionary"
+  ],
+  "author": {
+    "name": "Mathieu Le Ber",
+    "email": "mathieu.leber@gmail.com",
+    "url": "https://github.com/azixMcAze/Unity-SerializableDictionary"
+  }
+}

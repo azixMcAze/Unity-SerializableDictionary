@@ -61,7 +61,7 @@ To create a serializable dictionary of type `<string, List<Color>>`:
 
 ## Details
 
-As Unity is unable to directly serialize generic types, create a derived class for each `SerializedDictionary` specialization you want.
+Older versions of Unity (before 2020.1) are unable to directly serialize generic types. Therefore, you need to create a derived class for each `SerializedDictionary` specialization you want.
 ```csharp
 [Serializable]
 public class StringStringDictionary : SerializableDictionary<string, string> {}
